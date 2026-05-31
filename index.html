@@ -2,966 +2,410 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="1000km">
 <title>1000km Coach</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f2f2f7;
-  --card: #ffffff;
-  --card2: #e9e9ef;
-  --text: #1c1c1e;
-  --text2: #48484a;
-  --text3: #8e8e93;
-  --border: rgba(60,60,67,0.12);
-  --accent: #1a56db;
-  --accent-bg: #e8f0fd;
-  --green: #1c7d4a;
-  --green-bg: #e3f5ec;
-  --orange: #b45309;
-  --orange-bg: #fef3c7;
-  --red: #dc2626;
-  --red-bg: #fff0f0;
-  --tab-h: 82px;
-  --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --mono: 'DM Mono', 'Courier New', monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #111113;
-    --card: #1c1c1e;
-    --card2: #2c2c2e;
-    --text: #f5f5f7;
-    --text2: #d1d1d6;
-    --text3: #8e8e93;
-    --border: rgba(84,84,88,0.45);
-    --accent: #4e83f5;
-    --accent-bg: #152040;
-    --green: #30d158;
-    --green-bg: #0d2218;
-    --orange: #ffb340;
-    --orange-bg: #231800;
-    --red: #ff453a;
-    --red-bg: #220a0a;
-  }
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-*, *::before, *::after { box-sizing: border-box; }
-html { font-size: 16px; }
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; background: #f2f2f7; color: #1c1c1e; }
 
-/* APP SHELL */
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-}
-.screen {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: calc(var(--tab-h) + 24px);
-  padding-top: env(safe-area-inset-top, 0px);
-}
-.screen.hidden { display: none; }
-.screen-full {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 100;
-  background: var(--bg);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
+/* NAV */
+.tabs { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #ddd; padding-bottom: env(safe-area-inset-bottom, 8px); z-index: 99; }
+.tab { flex: 1; text-align: center; padding: 10px 4px 6px; cursor: pointer; font-size: 10px; color: #8e8e93; border: none; background: none; font-family: -apple-system, sans-serif; }
+.tab.on { color: #1a56db; }
+.tab span { display: block; font-size: 22px; margin-bottom: 2px; }
 
-/* HEADER */
-.page-header { padding: 20px 20px 12px; }
-.page-title { font-size: 26px; font-weight: 600; letter-spacing: -0.4px; color: var(--text); }
-.page-sub { font-size: 14px; color: var(--text3); margin-top: 3px; }
-
-/* TAB BAR */
-.tab-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 50;
-  background: var(--card);
-  border-top: 0.5px solid var(--border);
-  display: flex;
-  height: var(--tab-h);
-  padding-bottom: env(safe-area-inset-bottom, 16px);
-}
-.tab-item {
-  flex: 1;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 3px; cursor: pointer; padding-top: 10px;
-}
-.tab-label { font-size: 10px; color: var(--text3); font-weight: 500; font-family: var(--font); }
-.tab-item.active .tab-label { color: var(--accent); }
+/* SCREENS */
+.screen { display: none; padding: 20px 16px 100px; min-height: 100vh; background: #f2f2f7; }
+.screen.on { display: block; }
 
 /* CARDS */
-.card { background: var(--card); border-radius: 16px; padding: 16px; margin: 0 16px 12px; }
-.section-label {
-  font-size: 12px; font-weight: 600; color: var(--text3);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  padding: 4px 20px 8px; margin-top: 4px;
-}
+h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+.sub { font-size: 14px; color: #8e8e93; margin-bottom: 18px; }
+.card { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+.lbl { font-size: 11px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: .06em; margin: 12px 0 6px; }
 
-/* BUTTONS */
-.btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px 24px; border-radius: 14px; border: none;
-  cursor: pointer; font-family: var(--font); font-size: 16px; font-weight: 600;
-  width: 100%; transition: opacity 0.15s;
-}
-.btn:active { opacity: 0.7; }
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-ghost { background: var(--card2); color: var(--text); }
-.btn-green { background: var(--green); color: #fff; }
-.btn-danger { background: var(--red-bg); color: var(--red); }
-
-/* TODAY */
-.today-hero { margin: 0 16px 12px; background: var(--card); border-radius: 20px; overflow: hidden; }
-.hero-header { padding: 20px; }
-.hero-day { font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
-.hero-title { font-size: 24px; font-weight: 600; color: #fff; margin-top: 2px; line-height: 1.2; }
-.hero-meta { font-size: 13px; color: rgba(255,255,255,0.78); margin-top: 5px; display: flex; gap: 12px; }
-.hero-body { padding: 16px; }
-.rest-hero { background: var(--card); border-radius: 20px; margin: 0 16px 12px; padding: 32px 20px; text-align: center; }
-.rest-emoji { font-size: 40px; margin-bottom: 10px; }
-.rest-title { font-size: 22px; font-weight: 600; color: var(--text); }
-.rest-sub { font-size: 14px; color: var(--text3); margin-top: 6px; }
+/* HERO */
+.hero { border-radius: 18px; overflow: hidden; margin-bottom: 12px; }
+.hero-top { padding: 18px 16px; }
+.hero-tag { font-size: 11px; color: rgba(255,255,255,.8); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 3px; }
+.hero-name { font-size: 24px; font-weight: 700; color: #fff; }
+.hero-meta { font-size: 13px; color: rgba(255,255,255,.8); margin-top: 4px; }
+.hero-body { background: #fff; padding: 14px 16px; }
 
 /* EXERCISE ROWS */
-.ex-list { display: flex; flex-direction: column; }
-.ex-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
-.ex-row:last-child { border-bottom: none; }
-.ex-num { font-family: var(--mono); font-size: 12px; color: var(--text3); width: 18px; flex-shrink: 0; }
-.ex-info { flex: 1; }
-.ex-name { font-size: 15px; font-weight: 500; color: var(--text); }
-.ex-detail { font-size: 13px; color: var(--text3); margin-top: 1px; }
+.ex { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.ex:last-child { border-bottom: none; }
+.ex-n { font-size: 12px; color: #8e8e93; width: 18px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.ex-nm { font-size: 15px; font-weight: 500; }
+.ex-dt { font-size: 13px; color: #8e8e93; }
 
-/* WEEK STATS */
-.week-stats { background: var(--card); border-radius: 14px; margin: 0 16px 12px; padding: 12px 16px; }
-.ws-row { display: flex; align-items: center; justify-content: space-between; }
-.ws-label { font-size: 13px; color: var(--text3); }
-.ws-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 8px; }
-.ws-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
+/* BUTTONS */
+.btn { display: block; width: 100%; padding: 14px; border-radius: 13px; border: none; font-size: 16px; font-weight: 600; font-family: -apple-system, sans-serif; cursor: pointer; margin-top: 10px; text-align: center; }
+.btn-blue { background: #1a56db; color: #fff; }
+.btn-gray { background: #e9e9ef; color: #1c1c1e; }
+.btn-green { background: #1c7d4a; color: #fff; }
+.btn-red { background: #fff0f0; color: #dc2626; }
 
-/* WORKOUT SCREEN */
-.wk-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: calc(env(safe-area-inset-top, 16px) + 12px) 20px 0;
-  background: var(--bg);
-}
-.wk-close { font-size: 15px; color: var(--accent); cursor: pointer; padding: 6px 0; font-weight: 500; }
-.wk-title { font-size: 15px; font-weight: 600; color: var(--text); }
-.wk-rounds { font-size: 14px; color: var(--text3); }
-.wk-bar { height: 3px; background: var(--border); margin: 14px 20px 0; border-radius: 2px; overflow: hidden; }
-.wk-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
+/* WEEK SCHEMA */
+.week-card { background: #fff; border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+.week-head { display: flex; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid #f0f0f0; }
+.week-head strong { font-size: 14px; }
+.week-head span { font-size: 12px; color: #8e8e93; }
+.wday { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #f6f6f6; cursor: pointer; }
+.wday:last-child { border-bottom: none; }
+.wday.dim { opacity: .4; cursor: default; }
+.wday-lbl { font-size: 12px; color: #8e8e93; font-weight: 600; width: 24px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-k { background: #b45309; }
+.dot-l { background: #1c7d4a; }
+.dot-f { background: #1a56db; }
+.dot-r { background: #ccc; }
+.wday-nm { flex: 1; font-size: 14px; font-weight: 500; }
+.wday-dur { font-size: 12px; color: #8e8e93; }
 
-.wk-main {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 28px 24px 20px; text-align: center; min-height: 52vh;
-}
-.wk-exercise { font-size: 28px; font-weight: 700; letter-spacing: -0.4px; line-height: 1.15; margin-bottom: 6px; color: var(--text); }
-.wk-instruction { font-size: 15px; color: var(--text3); margin-bottom: 28px; min-height: 22px; padding: 0 8px; }
-.wk-timer-big { font-family: var(--mono); font-size: 76px; font-weight: 500; line-height: 1; color: var(--accent); letter-spacing: -3px; }
-.wk-reps-big { font-family: var(--mono); font-size: 76px; font-weight: 500; line-height: 1; color: var(--text); letter-spacing: -3px; }
-.wk-reps-label { font-size: 16px; color: var(--text3); margin-top: 6px; }
-.wk-tip { background: var(--accent-bg); border-radius: 12px; padding: 12px 16px; margin-top: 20px; text-align: left; width: 100%; max-width: 340px; }
-.wk-tip-label { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
-.wk-tip-text { font-size: 13px; color: var(--text2); line-height: 1.55; }
+/* WORKOUT OVERLAY */
+#wkov { display: none; position: fixed; inset: 0; background: #f2f2f7; z-index: 200; overflow-y: auto; padding-bottom: 40px; }
+.wkh { display: flex; align-items: center; justify-content: space-between; padding: 20px 18px 0; }
+.wkh-close { font-size: 15px; color: #1a56db; font-weight: 500; cursor: pointer; }
+.wkh-title { font-size: 15px; font-weight: 600; }
+.wkh-meta { font-size: 14px; color: #8e8e93; }
+.wkbar { height: 3px; background: #e0e0e0; margin: 14px 18px 0; border-radius: 2px; }
+.wkbar-fill { height: 100%; background: #1a56db; border-radius: 2px; transition: width .4s; }
+.wk-body { padding: 28px 20px 16px; text-align: center; min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.wk-nm { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.wk-sub { font-size: 15px; color: #8e8e93; margin-bottom: 24px; }
+.wk-big { font-size: 80px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -3px; line-height: 1; font-family: -apple-system, sans-serif; }
+.wk-big.blue { color: #1a56db; }
+.wk-big.grn { color: #1c7d4a; }
+.wk-tip { background: #e8f0fd; border-radius: 12px; padding: 12px 14px; margin-top: 20px; text-align: left; width: 100%; max-width: 340px; }
+.wk-tip b { font-size: 11px; color: #1a56db; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .06em; }
+.wk-tip p { font-size: 13px; color: #333; line-height: 1.55; }
+.wk-rest-body { background: #e3f5ec; min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 20px; text-align: center; }
+.wk-rest-lbl { font-size: 13px; font-weight: 700; color: #1c7d4a; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+.wk-rest-next { font-size: 16px; color: #333; margin-top: 14px; }
+.wk-run-body { min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 20px; text-align: center; }
+.seg-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
+.seg-run { background: #fef3c7; color: #b45309; }
+.seg-walk { background: #e3f5ec; color: #1c7d4a; }
+.wk-complete { min-height: 58vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; }
+.wk-btns { padding: 0 18px 32px; display: flex; flex-direction: column; gap: 10px; }
 
-.wk-actions { padding: 0 20px 32px; display: flex; flex-direction: column; gap: 10px; }
+/* PROFIEL */
+.pset { background: #fff; border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
+.prow { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; border-bottom: 1px solid #f0f0f0; }
+.prow:last-child { border-bottom: none; }
+.prow-lbl { font-size: 15px; }
+.prow-val { font-size: 14px; color: #8e8e93; }
+.prow input[type=date] { font-size: 14px; color: #1a56db; background: transparent; border: none; outline: none; text-align: right; font-family: -apple-system, sans-serif; }
+.prow.tap { cursor: pointer; }
+.prow.tap:active { background: #f5f5f5; }
 
-.wk-rest-main {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 28px 24px 20px; text-align: center; min-height: 52vh;
-  background: var(--green-bg);
-}
-.wk-rest-label { font-size: 13px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
-.wk-rest-timer { font-family: var(--mono); font-size: 76px; font-weight: 500; color: var(--green); letter-spacing: -3px; }
-.wk-rest-next { font-size: 16px; color: var(--text2); margin-top: 14px; }
-
-.wk-run-main {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 28px 24px 20px; text-align: center; min-height: 52vh;
-}
-.wk-seg-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
-.seg-lopen { background: var(--orange-bg); color: var(--orange); }
-.seg-rust { background: var(--green-bg); color: var(--green); }
-
-.wk-complete-main {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 40px 24px 24px; text-align: center; min-height: 55vh;
-}
-.wk-complete-icon { font-size: 64px; margin-bottom: 16px; }
-.wk-complete-title { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
-.wk-complete-sub { font-size: 15px; color: var(--text3); margin-top: 6px; }
-.wk-stats-row { display: flex; gap: 28px; margin: 28px 0 8px; }
-.wk-stat-box { text-align: center; }
-.wk-stat-val { font-family: var(--mono); font-size: 30px; font-weight: 500; color: var(--accent); }
-.wk-stat-lbl { font-size: 12px; color: var(--text3); margin-top: 2px; }
-
-/* SCHEMA */
-.phase-pills { display: flex; gap: 8px; padding: 0 16px 14px; overflow-x: auto; }
-.phase-pills::-webkit-scrollbar { display: none; }
-.phase-pill {
-  flex-shrink: 0; padding: 7px 16px; border-radius: 20px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  border: 1.5px solid var(--border); color: var(--text3);
-  background: transparent; font-family: var(--font);
-}
-.phase-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.week-card { background: var(--card); border-radius: 16px; margin: 0 16px 10px; overflow: hidden; }
-.week-head { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); }
-.week-num { font-size: 14px; font-weight: 600; color: var(--text); }
-.week-tag { font-size: 12px; color: var(--text3); }
-.wd-row { display: flex; align-items: center; padding: 10px 16px; border-bottom: 0.5px solid var(--border); gap: 12px; }
-.wd-row:last-child { border-bottom: none; }
-.wd-row.inactive { opacity: 0.38; }
-.wd-row.tappable { cursor: pointer; }
-.wd-row.tappable:active { background: var(--card2); }
-.wd-day { font-size: 12px; font-weight: 600; color: var(--text3); width: 26px; flex-shrink: 0; }
-.wd-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.d-kracht { background: var(--orange); }
-.d-lopen { background: var(--green); }
-.d-fiets { background: var(--accent); }
-.d-rest { background: var(--border); }
-.wd-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
-.wd-dur { font-size: 12px; color: var(--text3); }
-
-/* SETTINGS */
-.set-group { margin: 0 16px 16px; background: var(--card); border-radius: 16px; overflow: hidden; }
-.set-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 0.5px solid var(--border); }
-.set-row:last-child { border-bottom: none; }
-.set-row.tappable { cursor: pointer; }
-.set-row.tappable:active { background: var(--card2); }
-.set-lbl { font-size: 15px; color: var(--text); }
-.set-val { font-size: 14px; color: var(--text3); }
-.set-row input[type=date] { font-family: var(--font); font-size: 14px; color: var(--accent); background: transparent; border: none; outline: none; text-align: right; width: auto; }
-
-/* LOG */
-.log-row { background: var(--card); border-radius: 12px; margin: 0 16px 8px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
-.log-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-.log-info { flex: 1; }
-.log-name { font-size: 14px; font-weight: 500; color: var(--text); }
-.log-date { font-size: 12px; color: var(--text3); margin-top: 1px; }
-.log-dur { font-family: var(--mono); font-size: 13px; color: var(--text3); }
-.empty-msg { text-align: center; padding: 40px 24px; color: var(--text3); font-size: 14px; }
+/* LOG ROWS */
+.logrow { background: #fff; border-radius: 12px; margin-bottom: 8px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+.logrow-info { flex: 1; }
+.logrow-nm { font-size: 14px; font-weight: 500; }
+.logrow-dt { font-size: 12px; color: #8e8e93; margin-top: 1px; }
+.logrow-dur { font-size: 13px; color: #8e8e93; font-variant-numeric: tabular-nums; }
 
 /* TOAST */
-#toast {
-  position: fixed; bottom: 100px; left: 16px; right: 16px; z-index: 200;
-  background: var(--green); color: #fff;
-  padding: 14px 20px; border-radius: 14px;
-  font-weight: 600; font-size: 15px; text-align: center;
-  opacity: 0; transform: translateY(10px);
-  transition: opacity 0.3s, transform 0.3s;
-  pointer-events: none;
-}
-#toast.show { opacity: 1; transform: translateY(0); }
+#toast { position: fixed; bottom: 90px; left: 16px; right: 16px; background: #1c7d4a; color: #fff; padding: 14px; border-radius: 13px; text-align: center; font-weight: 600; font-size: 15px; z-index: 300; opacity: 0; transition: opacity .3s; pointer-events: none; }
+#toast.show { opacity: 1; }
 
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
 .pulse { animation: pulse 1s infinite; }
+
+/* PHASE PILLS */
+.pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; }
+.pills::-webkit-scrollbar { display: none; }
+.pill { flex-shrink: 0; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #ccc; color: #8e8e93; background: transparent; font-family: -apple-system, sans-serif; cursor: pointer; }
+.pill.on { background: #1a56db; color: #fff; border-color: #1a56db; }
+
+/* REST CARD */
+.rest-card { background: #fff; border-radius: 18px; padding: 36px 20px; text-align: center; margin-bottom: 12px; }
+.rest-icon { font-size: 44px; margin-bottom: 10px; }
+.rest-title { font-size: 22px; font-weight: 700; }
+.rest-sub { font-size: 14px; color: #8e8e93; margin-top: 6px; }
+
+/* WEEK BAR */
+.wkbar-card { background: #fff; border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }
+.wkbar-row { display: flex; justify-content: space-between; font-size: 13px; color: #8e8e93; margin-bottom: 8px; }
+.wkbar2 { height: 4px; background: #e0e0e0; border-radius: 2px; }
+.wkbar2-fill { height: 100%; background: #1a56db; border-radius: 2px; }
 </style>
 </head>
 <body>
-<div id="app">
-  <!-- TODAY -->
-  <div id="screen-today" class="screen">
-    <div class="page-header">
-      <div class="page-title" id="today-title">Goedenavond, Thiemen</div>
-      <div class="page-sub" id="today-date">—</div>
-    </div>
-    <div id="today-body"></div>
-  </div>
 
-  <!-- SCHEMA -->
-  <div id="screen-schema" class="screen hidden">
-    <div class="page-header">
-      <div class="page-title">12-weken plan</div>
-      <div class="page-sub">Tik op een sessie om te starten</div>
-    </div>
-    <div class="phase-pills" id="phase-pills"></div>
-    <div id="schema-body"></div>
-  </div>
+<!-- SCREENS -->
+<div id="s-today" class="screen on">
+  <h1 id="t-greeting">Goedenavond, Thiemen</h1>
+  <p class="sub" id="t-date"></p>
+  <div id="t-body"></div>
+</div>
 
-  <!-- PROFIEL -->
-  <div id="screen-profiel" class="screen hidden">
-    <div class="page-header">
-      <div class="page-title">Profiel</div>
-    </div>
-    <div class="section-label">Startdatum</div>
-    <div class="set-group">
-      <div class="set-row">
-        <span class="set-lbl">Eerste trainingsmaandag</span>
-        <input type="date" id="start-input" onchange="onDateChange(this.value)">
-      </div>
-    </div>
-    <div class="section-label">Agenda</div>
-    <div class="set-group">
-      <div class="set-row tappable" onclick="exportCal()">
-        <span class="set-lbl">📅 Exporteer naar Apple Agenda</span>
-        <span class="set-val">→</span>
-      </div>
-    </div>
-    <div class="section-label">Voortgang</div>
-    <div class="set-group">
-      <div class="set-row"><span class="set-lbl">Sessies voltooid</span><span class="set-val" id="p-sessions">0</span></div>
-      <div class="set-row"><span class="set-lbl">Huidige week</span><span class="set-val" id="p-week">—</span></div>
-      <div class="set-row"><span class="set-lbl">Langste fietsrit</span><span class="set-val" id="p-ride">—</span></div>
-    </div>
-    <div class="section-label">Logboek</div>
-    <div id="log-body"></div>
-    <div style="padding:8px 16px 16px;">
-      <button class="btn btn-danger" onclick="if(confirm('Wis je volledige logboek?'))resetLog()">Logboek wissen</button>
-    </div>
-    <div style="height:8px;"></div>
-  </div>
+<div id="s-schema" class="screen">
+  <h1>12-weken plan</h1>
+  <p class="sub">Tik op een sessie om te starten</p>
+  <div class="pills" id="pills"></div>
+  <div id="schema-body"></div>
+</div>
 
-  <!-- TAB BAR -->
-  <nav class="tab-bar">
-    <div class="tab-item active" id="tab-today" onclick="nav('today')">
-      <span style="font-size:22px;">🏠</span>
-      <span class="tab-label">Vandaag</span>
-    </div>
-    <div class="tab-item" id="tab-schema" onclick="nav('schema')">
-      <span style="font-size:22px;">📋</span>
-      <span class="tab-label">Schema</span>
-    </div>
-    <div class="tab-item" id="tab-profiel" onclick="nav('profiel')">
-      <span style="font-size:22px;">⚙️</span>
-      <span class="tab-label">Profiel</span>
-    </div>
-  </nav>
+<div id="s-profiel" class="screen">
+  <h1>Profiel</h1>
+  <p class="sub">Instellingen en voortgang</p>
+  <div class="lbl">Startdatum</div>
+  <div class="pset">
+    <div class="prow"><span class="prow-lbl">Eerste trainingsmaandag</span><input type="date" id="dateinput" onchange="setDate(this.value)"></div>
+  </div>
+  <div class="lbl">Agenda</div>
+  <div class="pset">
+    <div class="prow tap" onclick="exportCal()"><span class="prow-lbl">📅 Exporteer naar Apple Agenda</span><span class="prow-val">→</span></div>
+  </div>
+  <div class="lbl">Voortgang</div>
+  <div class="pset">
+    <div class="prow"><span class="prow-lbl">Sessies voltooid</span><span class="prow-val" id="p-s">0</span></div>
+    <div class="prow"><span class="prow-lbl">Huidige week</span><span class="prow-val" id="p-w">—</span></div>
+    <div class="prow"><span class="prow-lbl">Langste fietsrit</span><span class="prow-val" id="p-r">—</span></div>
+  </div>
+  <div class="lbl">Logboek</div>
+  <div id="log-body"></div>
+  <button class="btn btn-red" onclick="if(confirm('Wis logboek?'))wipeLog()" style="margin-top:4px;">Logboek wissen</button>
+</div>
+
+<!-- TAB BAR -->
+<div class="tabs">
+  <button class="tab on" id="tab-today" onclick="goTab('today')"><span>🏠</span>Vandaag</button>
+  <button class="tab" id="tab-schema" onclick="goTab('schema')"><span>📋</span>Schema</button>
+  <button class="tab" id="tab-profiel" onclick="goTab('profiel')"><span>⚙️</span>Profiel</button>
 </div>
 
 <!-- WORKOUT OVERLAY -->
-<div id="wk-screen" class="screen-full hidden"></div>
+<div id="wkov"></div>
+
+<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
-// ─── OEFENINGEN ──────────────────────────────────────────────────────────────
-var EX = {
-  squat:          { nm:'Squat',            tip:'Voeten schouderbreedte, tenen licht naar buiten. Zak tot dijen parallel aan de grond. Knieën naar buiten, hakken in de grond.' },
-  pushup:         { nm:'Push-up',          tip:'Rechte plank hoofd-hielen. Handen iets breder dan schouders. Ellebogen schuin achterwaarts. Op knieën mag.' },
-  plank:          { nm:'Plank',            tip:'Onderarmen en tenen. Buik aanspannen alsof je een stomp verwacht. Heupen niet doorhangen. Adem normaal door.' },
-  lunge:          { nm:'Lunge',            tip:'Grote stap vooruit, recht omlaag zakken. Voorste knie boven de voet. Romp rechtop. Duw terug via je voorste hiel.' },
-  mc:             { nm:'Mountain climbers', tip:'Push-up positie, heupen laag. Knieën afwisselend explosief naar je borst. Bouw het tempo op naarmate je het gevoel krijgt.' },
-  glute:          { nm:'Glute bridge',     tip:'Rug op de grond, knieën gebogen. Heupen omhoog tot rechte lijn. Billen maximaal aanspannen bovenaan — 1 sec vasthouden.' },
-  jsquat:         { nm:'Jump squat',       tip:'Gewone squat, explosief omhoog springen. Land zacht op de ballen van je voeten, direct terug in de squat.' },
-  rlunge:         { nm:'Reverse lunge',    tip:'Stap achterwaarts in plaats van voorwaarts. Minder belasting op de knie. Achterknie bijna de grond. Romp rechtop.' },
-  burpee:         { nm:'Burpee',           tip:'Staand → handen grond → voeten achteruit (plank) → voeten terug → spring omhoog met armen omhoog. Ritmisch werken.' },
-  dip:            { nm:'Dip (stoel)',      tip:'Handen op de rand van een stoel achter je, voeten gestrekt. Buig tot 90° en duw terug. Rug dicht bij de stoel.' },
+// ── DATA ──────────────────────────────────────────────────────────────────────
+var EX={
+  squat:{n:'Squat',t:'Voeten schouderbreedte, tenen licht naar buiten. Zak tot dijen parallel. Knieën naar buiten, hakken in de grond.'},
+  pushup:{n:'Push-up',t:'Rechte plank hoofd–hielen. Ellebogen schuin achterwaarts. Op knieën mag.'},
+  plank:{n:'Plank',t:'Onderarmen en tenen. Buik hard aanspannen. Heupen niet laten zakken. Adem door.'},
+  lunge:{n:'Lunge',t:'Grote stap vooruit, recht omlaag. Voorste knie boven de voet. Romp recht. Duw terug via je hiel.'},
+  mc:{n:'Mountain climbers',t:'Push-up positie, heupen laag. Knieën afwisselend naar borst. Bouw tempo op.'},
+  glute:{n:'Glute bridge',t:'Rug op grond, knieën gebogen. Heupen omhoog tot rechte lijn. Billen maximaal aanspannen boven.'},
+  jsquat:{n:'Jump squat',t:'Gewone squat, explosief omhoog springen. Land zacht op de ballen van je voeten.'},
+  rlunge:{n:'Reverse lunge',t:'Stap achterwaarts, achterknie bijna de grond. Minder belasting op knie dan voorwaartse lunge.'},
+  burpee:{n:'Burpee',t:'Staand → handen grond → plank → voeten terug → spring omhoog. Ritmisch werken.'},
+  dip:{n:'Dip (stoel)',t:'Handen op rand stoel achter je, voeten gestrekt. Buig tot 90° en duw terug. Rug dicht bij stoel.'},
 };
 
-function mkKracht(rounds, exs) {
-  return { type:'kracht', rounds:rounds, restRound:90, exs:exs };
-}
-
-var WK = {
-  kA1: mkKracht(3,[
-    {id:'squat', reps:20, rest:30},
-    {id:'pushup', reps:12, rest:30},
-    {id:'plank', sec:40, rest:30},
-    {id:'lunge', reps:12, note:'per been', rest:30},
-    {id:'mc', reps:25, rest:30},
-    {id:'glute', reps:20, rest:0},
-  ]),
-  kB1: mkKracht(3,[
-    {id:'glute', reps:20, rest:30},
-    {id:'squat', reps:20, rest:30},
-    {id:'plank', sec:40, rest:30},
-    {id:'pushup', reps:12, rest:30},
-    {id:'lunge', reps:12, note:'per been', rest:30},
-    {id:'mc', reps:25, rest:0},
-  ]),
-  kA2: mkKracht(3,[
-    {id:'jsquat', reps:15, rest:30},
-    {id:'pushup', reps:15, rest:30},
-    {id:'plank', sec:60, rest:30},
-    {id:'rlunge', reps:15, note:'per been', rest:30},
-    {id:'burpee', reps:10, rest:30},
-    {id:'dip', reps:12, rest:0},
-  ]),
-  kB2: mkKracht(3,[
-    {id:'dip', reps:12, rest:30},
-    {id:'jsquat', reps:15, rest:30},
-    {id:'burpee', reps:10, rest:30},
-    {id:'plank', sec:60, rest:30},
-    {id:'rlunge', reps:15, note:'per been', rest:30},
-    {id:'pushup', reps:15, rest:0},
-  ]),
-  kA3: mkKracht(4,[
-    {id:'jsquat', reps:15, rest:30},
-    {id:'pushup', reps:15, rest:30},
-    {id:'plank', sec:60, rest:30},
-    {id:'rlunge', reps:15, note:'per been', rest:30},
-    {id:'burpee', reps:10, rest:30},
-    {id:'dip', reps:12, rest:0},
-  ]),
-  kB3: mkKracht(4,[
-    {id:'dip', reps:12, rest:30},
-    {id:'jsquat', reps:15, rest:30},
-    {id:'burpee', reps:10, rest:30},
-    {id:'plank', sec:60, rest:30},
-    {id:'rlunge', reps:15, note:'per been', rest:30},
-    {id:'pushup', reps:15, rest:0},
-  ]),
+function K(r,es){return{type:'kracht',rounds:r,rr:90,exs:es};}
+var WK={
+  kA1:K(3,[{id:'squat',reps:20,rest:30},{id:'pushup',reps:12,rest:30},{id:'plank',sec:40,rest:30},{id:'lunge',reps:12,note:'per been',rest:30},{id:'mc',reps:25,rest:30},{id:'glute',reps:20,rest:0}]),
+  kB1:K(3,[{id:'glute',reps:20,rest:30},{id:'squat',reps:20,rest:30},{id:'plank',sec:40,rest:30},{id:'pushup',reps:12,rest:30},{id:'lunge',reps:12,note:'per been',rest:30},{id:'mc',reps:25,rest:0}]),
+  kA2:K(3,[{id:'jsquat',reps:15,rest:30},{id:'pushup',reps:15,rest:30},{id:'plank',sec:60,rest:30},{id:'rlunge',reps:15,note:'per been',rest:30},{id:'burpee',reps:10,rest:30},{id:'dip',reps:12,rest:0}]),
+  kB2:K(3,[{id:'dip',reps:12,rest:30},{id:'jsquat',reps:15,rest:30},{id:'burpee',reps:10,rest:30},{id:'plank',sec:60,rest:30},{id:'rlunge',reps:15,note:'per been',rest:30},{id:'pushup',reps:15,rest:0}]),
+  kA3:K(4,[{id:'jsquat',reps:15,rest:30},{id:'pushup',reps:15,rest:30},{id:'plank',sec:60,rest:30},{id:'rlunge',reps:15,note:'per been',rest:30},{id:'burpee',reps:10,rest:30},{id:'dip',reps:12,rest:0}]),
+  kB3:K(4,[{id:'dip',reps:12,rest:30},{id:'jsquat',reps:15,rest:30},{id:'burpee',reps:10,rest:30},{id:'plank',sec:60,rest:30},{id:'rlunge',reps:15,note:'per been',rest:30},{id:'pushup',reps:15,rest:0}]),
 };
 
-function mkLoop(segs) { return { type:'lopen', segs:segs }; }
+function lsegs(n,rs,ws){var a=[{n:'Opwarmen',i:'Rustig wandelen',s:300,g:true}];for(var x=0;x<n;x++){a.push({n:'Lopen '+(x+1)+'/'+n,i:'Stevig tempo',s:rs,g:false});if(x<n-1)a.push({n:'Herstel',i:'Rustig joggen',s:ws,g:true});}a.push({n:'Afkoelen',i:'Rustig wandelen',s:300,g:true});return a;}
+function csegs(m){return[{n:'Inlopen',i:'Rustig opwarmen',s:300,g:true},{n:'Doorlopen '+m+' min',i:'Constant comfortabel tempo',s:m*60,g:false},{n:'Uitlopen',i:'Rustig afkoelen',s:300,g:true}];}
+var LP={l1:{segs:lsegs(6,120,60)},l2:{segs:lsegs(3,480,120)},l3:{segs:csegs(35)}};
 
-function loopSegs(n, runSec, restSec) {
-  var s = [{ nm:'Opwarmen', info:'Rustig wandelen', sec:300, groen:true }];
-  for (var i=0; i<n; i++) {
-    s.push({ nm:'Lopen '+(i+1)+'/'+n, info:'Stevig tempo — gesprek kost moeite', sec:runSec, groen:false });
-    if (i < n-1) s.push({ nm:'Herstel', info:'Rustig joggen of wandelen', sec:restSec, groen:true });
-  }
-  s.push({ nm:'Afkoelen', info:'Rustig wandelen', sec:300, groen:true });
-  return s;
-}
-
-function contLoop(min) {
-  return [
-    { nm:'Inlopen', info:'Rustig opwarmen', sec:300, groen:true },
-    { nm:'Doorlopen '+min+' min', info:'Constant comfortabel tempo', sec:min*60, groen:false },
-    { nm:'Uitlopen', info:'Rustig afkoelen', sec:300, groen:true },
-  ];
-}
-
-var LOOP = {
-  l1: mkLoop(loopSegs(6,120,60)),
-  l2: mkLoop(loopSegs(3,480,120)),
-  l3: mkLoop(contLoop(35)),
-};
-
-// ─── SCHEMA ───────────────────────────────────────────────────────────────────
-var SCHEMA = [
-  {w:1,p:1,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:35,wk:'kA1'},{d:3,lbl:'Wo',nm:'Lopen',type:'lopen',min:28,wk:'l1'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:35,wk:'kB1'},{d:6,lbl:'Za',nm:'Rust',type:'rest',min:null,wk:null}]},
-  {w:2,p:1,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:35,wk:'kA1'},{d:3,lbl:'Wo',nm:'Lopen',type:'lopen',min:28,wk:'l1'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:35,wk:'kB1'},{d:6,lbl:'Za',nm:'Rust',type:'rest',min:null,wk:null}]},
-  {w:3,p:1,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:35,wk:'kA1'},{d:3,lbl:'Wo',nm:'Lopen',type:'lopen',min:28,wk:'l1'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:35,wk:'kB1'},{d:6,lbl:'Za',nm:'Fietsen 35 min',type:'fiets',min:35,wk:null}]},
-  {w:4,p:1,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:35,wk:'kA1'},{d:3,lbl:'Wo',nm:'Lopen',type:'lopen',min:28,wk:'l1'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:35,wk:'kB1'},{d:6,lbl:'Za',nm:'Fietsen 45 min',type:'fiets',min:45,wk:null}]},
-  {w:5,p:2,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:40,wk:'kA2'},{d:3,lbl:'Wo',nm:'Lopen interval+',type:'lopen',min:36,wk:'l2'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:40,wk:'kB2'},{d:6,lbl:'Za',nm:'Fietsen 60 min',type:'fiets',min:60,wk:null}]},
-  {w:6,p:2,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:40,wk:'kA2'},{d:3,lbl:'Wo',nm:'Lopen interval+',type:'lopen',min:36,wk:'l2'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:40,wk:'kB2'},{d:6,lbl:'Za',nm:'Fietsen 60 min',type:'fiets',min:60,wk:null}]},
-  {w:7,p:2,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:40,wk:'kA2'},{d:3,lbl:'Wo',nm:'Lopen interval+',type:'lopen',min:36,wk:'l2'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:40,wk:'kB2'},{d:6,lbl:'Za',nm:'Fietsen 75 min',type:'fiets',min:75,wk:null}]},
-  {w:8,p:2,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:40,wk:'kA2'},{d:3,lbl:'Wo',nm:'Lopen interval+',type:'lopen',min:36,wk:'l2'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:40,wk:'kB2'},{d:6,lbl:'Za',nm:'Fietsen 75 min',type:'fiets',min:75,wk:null}]},
-  {w:9,p:3,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:45,wk:'kA3'},{d:3,lbl:'Wo',nm:'Doorlopen 35 min',type:'lopen',min:45,wk:'l3'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:45,wk:'kB3'},{d:6,lbl:'Za',nm:'Lange rit 90 min',type:'fiets',min:90,wk:null}]},
-  {w:10,p:3,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:45,wk:'kA3'},{d:3,lbl:'Wo',nm:'Doorlopen 35 min',type:'lopen',min:45,wk:'l3'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:45,wk:'kB3'},{d:6,lbl:'Za',nm:'Lange rit 90 min',type:'fiets',min:90,wk:null}]},
-  {w:11,p:3,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:45,wk:'kA3'},{d:3,lbl:'Wo',nm:'Doorlopen 35 min',type:'lopen',min:45,wk:'l3'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:45,wk:'kB3'},{d:6,lbl:'Za',nm:'Lange rit 2 uur',type:'fiets',min:120,wk:null}]},
-  {w:12,p:3,days:[{d:1,lbl:'Ma',nm:'Kracht A',type:'kracht',min:45,wk:'kA3'},{d:3,lbl:'Wo',nm:'Doorlopen 35 min',type:'lopen',min:45,wk:'l3'},{d:5,lbl:'Vr',nm:'Kracht B',type:'kracht',min:45,wk:'kB3'},{d:6,lbl:'Za',nm:'Lange rit 2 uur',type:'fiets',min:120,wk:null}]},
+var SC=[
+  {w:1,p:1,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:35,k:'kA1'},{d:3,l:'Wo',n:'Lopen',t:'lopen',m:28,k:'l1'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:35,k:'kB1'},{d:6,l:'Za',n:'Rust',t:'rest',m:null,k:null}]},
+  {w:2,p:1,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:35,k:'kA1'},{d:3,l:'Wo',n:'Lopen',t:'lopen',m:28,k:'l1'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:35,k:'kB1'},{d:6,l:'Za',n:'Rust',t:'rest',m:null,k:null}]},
+  {w:3,p:1,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:35,k:'kA1'},{d:3,l:'Wo',n:'Lopen',t:'lopen',m:28,k:'l1'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:35,k:'kB1'},{d:6,l:'Za',n:'Fietsen 35 min',t:'fiets',m:35,k:null}]},
+  {w:4,p:1,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:35,k:'kA1'},{d:3,l:'Wo',n:'Lopen',t:'lopen',m:28,k:'l1'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:35,k:'kB1'},{d:6,l:'Za',n:'Fietsen 45 min',t:'fiets',m:45,k:null}]},
+  {w:5,p:2,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:40,k:'kA2'},{d:3,l:'Wo',n:'Lopen interval+',t:'lopen',m:36,k:'l2'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:40,k:'kB2'},{d:6,l:'Za',n:'Fietsen 60 min',t:'fiets',m:60,k:null}]},
+  {w:6,p:2,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:40,k:'kA2'},{d:3,l:'Wo',n:'Lopen interval+',t:'lopen',m:36,k:'l2'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:40,k:'kB2'},{d:6,l:'Za',n:'Fietsen 60 min',t:'fiets',m:60,k:null}]},
+  {w:7,p:2,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:40,k:'kA2'},{d:3,l:'Wo',n:'Lopen interval+',t:'lopen',m:36,k:'l2'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:40,k:'kB2'},{d:6,l:'Za',n:'Fietsen 75 min',t:'fiets',m:75,k:null}]},
+  {w:8,p:2,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:40,k:'kA2'},{d:3,l:'Wo',n:'Lopen interval+',t:'lopen',m:36,k:'l2'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:40,k:'kB2'},{d:6,l:'Za',n:'Fietsen 75 min',t:'fiets',m:75,k:null}]},
+  {w:9,p:3,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:45,k:'kA3'},{d:3,l:'Wo',n:'Doorlopen 35 min',t:'lopen',m:45,k:'l3'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:45,k:'kB3'},{d:6,l:'Za',n:'Lange rit 90 min',t:'fiets',m:90,k:null}]},
+  {w:10,p:3,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:45,k:'kA3'},{d:3,l:'Wo',n:'Doorlopen 35 min',t:'lopen',m:45,k:'l3'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:45,k:'kB3'},{d:6,l:'Za',n:'Lange rit 90 min',t:'fiets',m:90,k:null}]},
+  {w:11,p:3,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:45,k:'kA3'},{d:3,l:'Wo',n:'Doorlopen 35 min',t:'lopen',m:45,k:'l3'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:45,k:'kB3'},{d:6,l:'Za',n:'Lange rit 2 uur',t:'fiets',m:120,k:null}]},
+  {w:12,p:3,days:[{d:1,l:'Ma',n:'Kracht A',t:'kracht',m:45,k:'kA3'},{d:3,l:'Wo',n:'Doorlopen 35 min',t:'lopen',m:45,k:'l3'},{d:5,l:'Vr',n:'Kracht B',t:'kracht',m:45,k:'kB3'},{d:6,l:'Za',n:'Lange rit 2 uur',t:'fiets',m:120,k:null}]},
 ];
 
-// ─── STORAGE ─────────────────────────────────────────────────────────────────
-function loadState() {
-  try { return JSON.parse(localStorage.getItem('s1') || '{}'); } catch(e) { return {}; }
-}
-function saveState(s) {
-  try { localStorage.setItem('s1', JSON.stringify(s)); } catch(e) {}
-}
-function loadLog() {
-  try { return JSON.parse(localStorage.getItem('l1') || '[]'); } catch(e) { return []; }
-}
-function saveLog(l) {
-  try { localStorage.setItem('l1', JSON.stringify(l.slice(0,60))); } catch(e) {}
-}
-function addLog(entry) {
-  var l = loadLog(); l.unshift(entry); saveLog(l);
-}
-function resetLog() {
-  try { localStorage.removeItem('l1'); } catch(e) {}
-  renderProfiel();
+// ── STORAGE ───────────────────────────────────────────────────────────────────
+function ls(k,fb){try{var v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return fb;}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function getS(){return ls('cs',{});}
+function setS(s){ss('cs',s);}
+function getL(){return ls('cl',[]);}
+function setL(l){ss('cl',l.slice(0,60));}
+function addL(e){var l=getL();l.unshift(e);setL(l);}
+function wipeLog(){ss('cl',[]);renderP();}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function ft(s){var m=Math.floor(s/60),sc=s%60;return(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc;}
+function beep(f,d){try{var c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f||880;g.gain.setValueAtTime(0.3,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+(d||0.15));o.start();o.stop(c.currentTime+(d||0.15));}catch(e){}}
+function triBeep(){beep(880,0.1);setTimeout(function(){beep(880,0.1);},160);setTimeout(function(){beep(1100,0.2);},320);}
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},3000);}
+
+function getWI(){
+  var s=getS();if(!s.startDate)return null;
+  var st=new Date(s.startDate);st.setHours(0,0,0,0);
+  var td=new Date();td.setHours(0,0,0,0);
+  var d=Math.floor((td-st)/86400000);
+  if(d<0)return{future:true,dl:-d};
+  var wi=Math.min(Math.floor(d/7),11);
+  return{wi:wi,wk:SC[wi],dow:td.getDay()};
 }
 
-// ─── NAVIGATION ──────────────────────────────────────────────────────────────
-var activeTab = 'today';
-function nav(tab) {
-  ['today','schema','profiel'].forEach(function(t) {
-    var s = document.getElementById('screen-'+t);
-    var tb = document.getElementById('tab-'+t);
-    if (s) s.classList.toggle('hidden', t !== tab);
-    if (tb) tb.classList.toggle('active', t === tab);
+// ── NAV ───────────────────────────────────────────────────────────────────────
+var AT='today';
+function goTab(t){
+  ['today','schema','profiel'].forEach(function(x){
+    document.getElementById('s-'+x).classList.toggle('on',x===t);
+    document.getElementById('tab-'+x).classList.toggle('on',x===t);
   });
-  activeTab = tab;
-  if (tab === 'today') renderToday();
-  if (tab === 'schema') renderSchema();
-  if (tab === 'profiel') renderProfiel();
+  AT=t;
+  if(t==='today')renderT();
+  if(t==='schema')renderSC();
+  if(t==='profiel')renderP();
 }
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
-function fmtTime(sec) {
-  var m = Math.floor(sec / 60);
-  var s = sec % 60;
-  return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+// ── TODAY ─────────────────────────────────────────────────────────────────────
+function renderT(){
+  var now=new Date(),h=now.getHours();
+  document.getElementById('t-greeting').textContent=(h<12?'Goedemorgen':h<18?'Goedemiddag':'Goedenavond')+', Thiemen';
+  document.getElementById('t-date').textContent=now.toLocaleDateString('nl-BE',{weekday:'long',day:'numeric',month:'long'});
+  var s=getS(),body=document.getElementById('t-body'),html='';
+  if(!s.startDate){body.innerHTML='<div class="card" style="text-align:center;padding:32px 16px;"><div style="font-size:44px;margin-bottom:14px;">🚴</div><div style="font-size:20px;font-weight:700;margin-bottom:8px;">Welkom, Thiemen</div><div style="font-size:14px;color:#8e8e93;margin-bottom:20px;">Stel je startdatum in om te starten.</div><button class="btn btn-blue" onclick="goTab(\'profiel\')">Startdatum instellen →</button></div>';return;}
+  var info=getWI();
+  if(!info){body.innerHTML='';return;}
+  if(info.future){body.innerHTML='<div class="rest-card"><div class="rest-icon">⏳</div><div class="rest-title">Start over '+info.dl+' dag'+(info.dl===1?'':'en')+'</div><div class="rest-sub">Eerste trainingsmaandag komt eraan</div></div>';return;}
+  var log=getL(),wkst=new Date(s.startDate);
+  wkst.setDate(wkst.getDate()+info.wi*7);wkst.setHours(0,0,0,0);
+  var wkend=new Date(wkst);wkend.setDate(wkend.getDate()+7);
+  var done=log.filter(function(e){var d=new Date(e.date);return d>=wkst&&d<wkend;}).length;
+  html+='<div class="wkbar-card"><div class="wkbar-row"><span>Week '+(info.wi+1)+' · Fase '+info.wk.p+'</span><span>'+done+'/3 sessies</span></div><div class="wkbar2"><div class="wkbar2-fill" style="width:'+Math.round(done/3*100)+'%;"></div></div></div>';
+  var sess=null;for(var i=0;i<info.wk.days.length;i++){if(info.wk.days[i].d===info.dow){sess=info.wk.days[i];break;}}
+  if(!sess||sess.t==='rest'){html+='<div class="rest-card"><div class="rest-icon">😴</div><div class="rest-title">Rustdag</div><div class="rest-sub">Herstel is training. Actief bewegen mag.</div></div>';}
+  else if(sess.t==='fiets'){html+='<div class="hero"><div class="hero-top" style="background:#1a56db;"><div class="hero-tag">Vandaag · Week '+(info.wi+1)+'</div><div class="hero-name">🚴 '+sess.n+'</div><div class="hero-meta">⏱ '+sess.m+' min · Ochtend of namiddag</div></div><div class="hero-body"><p style="font-size:14px;color:#444;line-height:1.6;margin-bottom:12px;">Rit van '+sess.m+' min. Comfortabel tempo — je kan een gesprek voeren.</p><button class="btn btn-blue" onclick="startFiets('+sess.m+',\''+sess.n+'\')">⏱ Start fietsklok</button></div></div>';}
+  else{var col=sess.t==='kracht'?'#b45309':'#1c7d4a',icon=sess.t==='kracht'?'💪':'🏃';html+='<div class="hero"><div class="hero-top" style="background:'+col+';"><div class="hero-tag">Vandaag · Week '+(info.wi+1)+'</div><div class="hero-name">'+icon+' '+sess.n+'</div><div class="hero-meta">⏱ ~'+sess.m+' min · Na 21u</div></div><div class="hero-body">';
+  if(sess.t==='kracht'&&sess.k){var wk=WK[sess.k];html+='<div style="font-size:13px;color:#8e8e93;margin-bottom:10px;">'+wk.rounds+' ronden · '+wk.exs.length+' oefeningen · '+wk.rr+'s rust tussen ronden</div><div>';for(var j=0;j<wk.exs.length;j++){var ex=wk.exs[j],exd=EX[ex.id];html+='<div class="ex"><div class="ex-n">'+(j+1)+'</div><div><div class="ex-nm">'+exd.n+'</div><div class="ex-dt">'+(ex.sec?ex.sec+'s':ex.reps+(ex.note?' '+ex.note:' herh.'))+'</div></div></div>';}html+='</div><button class="btn btn-blue" onclick="startKracht(\''+sess.k+'\',\''+sess.n+'\')">▶ Start workout</button>';}
+  else if(sess.t==='lopen'&&sess.k){var lp=LP[sess.k],tot=Math.round(lp.segs.reduce(function(a,s){return a+s.s;},0)/60);html+='<div style="font-size:13px;color:#8e8e93;margin-bottom:10px;">'+lp.segs.length+' segmenten · '+tot+' min totaal</div><div>';for(var k=0;k<lp.segs.length;k++){var sg=lp.segs[k];html+='<div class="ex"><div class="dot '+(sg.g?'dot-l':'dot-k')+'" style="margin-top:2px;"></div><div><div class="ex-nm">'+sg.n+'</div><div class="ex-dt">'+Math.round(sg.s/60)+' min · '+sg.i+'</div></div></div>';}html+='</div><button class="btn btn-blue" onclick="startLopen(\''+sess.k+'\',\''+sess.n+'\')">▶ Start loopsessie</button>';}
+  html+='</div></div>';}
+  var up=[];for(var u=0;u<info.wk.days.length;u++){if(info.wk.days[u].d>info.dow&&info.wk.days[u].t!=='rest')up.push(info.wk.days[u]);}
+  if(up.length){html+='<div class="lbl">Later deze week</div>';var dl=['Zo','Ma','Di','Wo','Do','Vr','Za'];for(var v=0;v<up.length;v++){var uu=up[v],dc=uu.t==='kracht'?'dot-k':uu.t==='lopen'?'dot-l':'dot-f';html+='<div class="logrow"><div class="dot '+dc+'"></div><div class="logrow-info"><div class="logrow-nm">'+dl[uu.d]+' — '+uu.n+'</div></div><div class="logrow-dur">'+(uu.m?uu.m+'m':'')+'</div></div>';}}
+  body.innerHTML=html;
 }
 
-function getWeekInfo() {
-  var state = loadState();
-  if (!state.startDate) return null;
-  var start = new Date(state.startDate);
-  start.setHours(0,0,0,0);
-  var today = new Date(); today.setHours(0,0,0,0);
-  var diff = Math.floor((today - start) / 86400000);
-  if (diff < 0) return { future: true, daysLeft: -diff };
-  var wi = Math.min(Math.floor(diff / 7), 11);
-  var dow = today.getDay();
-  return { wi: wi, wk: SCHEMA[wi], dow: dow };
+// ── SCHEMA ────────────────────────────────────────────────────────────────────
+var AP=1;
+function renderSC(){
+  var pills=document.getElementById('pills'),h='';
+  for(var p=1;p<=3;p++)h+='<button class="pill'+(AP===p?' on':'')+'" onclick="setP('+p+')">Fase '+p+' — wk '+((p-1)*4+1)+'–'+(p*4)+'</button>';
+  pills.innerHTML=h;
+  var body=document.getElementById('schema-body');h='';
+  for(var i=0;i<SC.length;i++){var wk=SC[i];if(wk.p!==AP)continue;
+    h+='<div class="week-card"><div class="week-head"><strong>Week '+wk.w+'</strong><span>Fase '+wk.p+'</span></div>';
+    for(var j=0;j<wk.days.length;j++){var s=wk.days[j],dc=s.t==='kracht'?'dot-k':s.t==='lopen'?'dot-l':s.t==='fiets'?'dot-f':'dot-r',tap=s.k||(s.t==='fiets'&&s.m)?true:false;
+      var oc='';if(s.t==='kracht'&&s.k)oc='onclick="startKracht(\''+s.k+'\',\''+s.n+'\')"';else if(s.t==='lopen'&&s.k)oc='onclick="startLopen(\''+s.k+'\',\''+s.n+'\')"';else if(s.t==='fiets'&&s.m)oc='onclick="startFiets('+s.m+',\''+s.n+'\')"';
+      h+='<div class="wday'+(s.t==='rest'?' dim':'')+(tap?' ':'')+(tap?'" '+oc:'""')+'><div class="wday-lbl">'+s.l+'</div><div class="dot '+dc+'"></div><div class="wday-nm">'+s.n+'</div><div class="wday-dur">'+(s.m?s.m+'m':'')+'</div></div>';}
+    h+='</div>';}
+  body.innerHTML=h;
+}
+function setP(p){AP=p;renderSC();}
+
+// ── PROFIEL ───────────────────────────────────────────────────────────────────
+function renderP(){
+  var s=getS(),inp=document.getElementById('dateinput');
+  if(inp&&s.startDate)inp.value=s.startDate;
+  var log=getL();
+  document.getElementById('p-s').textContent=log.length;
+  var rides=log.filter(function(e){return e.t==='fiets';});
+  document.getElementById('p-r').textContent=rides.length?Math.max.apply(null,rides.map(function(e){return e.m||0;}))+' min':'—';
+  var wt='—';if(s.startDate){var info=getWI();if(info&&!info.future)wt=(info.wi+1)+' van 12';}
+  document.getElementById('p-w').textContent=wt;
+  var lb=document.getElementById('log-body');
+  if(!log.length){lb.innerHTML='<div style="text-align:center;padding:32px;color:#8e8e93;font-size:14px;">Nog geen sessies gelogd.</div>';return;}
+  var h='';for(var i=0;i<Math.min(log.length,20);i++){var e=log[i],dc=e.t==='kracht'?'dot-k':e.t==='lopen'?'dot-l':'dot-f',dt=new Date(e.date).toLocaleDateString('nl-BE',{day:'numeric',month:'short'});h+='<div class="logrow"><div class="dot '+dc+'"></div><div class="logrow-info"><div class="logrow-nm">'+e.n+'</div><div class="logrow-dt">'+dt+'</div></div><div class="logrow-dur">'+(e.m?e.m+'m':'')+'</div></div>';}
+  lb.innerHTML=h;
+}
+function setDate(v){var s=getS();s.startDate=v;setS(s);renderT();renderP();}
+
+// ── FIETS ────────────────────────────────────────────────────────────────────
+function startFiets(dur,nm){
+  var ws=document.getElementById('wkov');ws.style.display='block';
+  var total=dur*60,st=Date.now(),paused=false,pausedAt=0,iv;
+  function el(){return paused?pausedAt:Math.floor((Date.now()-st)/1000);}
+  function rem(){return Math.max(total-el(),0);}
+  function render(){var r=rem(),e=el(),pct=Math.min(e/total,1);ws.innerHTML='<div class="wkh"><span class="wkh-close" onclick="closeWk()">✕ Sluiten</span><span class="wkh-title">Fietsen</span><span class="wkh-meta">'+dur+' min</span></div><div class="wkbar"><div class="wkbar-fill" style="width:'+Math.round(pct*100)+'%;"></div></div><div class="wk-body"><div class="wk-nm">🚴 Fietsrit</div><div class="wk-sub">Comfortabel tempo</div><div class="wk-big blue'+(r<10?' pulse':'')+'">'+ft(r)+'</div><div style="font-size:14px;color:#8e8e93;margin-top:10px;">Verstreken: '+ft(e)+'</div></div><div class="wk-btns">'+(r>0?'<button class="btn btn-gray" onclick="fp()">'+(paused?'▶ Hervatten':'⏸ Pauzeren')+'</button>':'<button class="btn btn-green" onclick="fd()">✓ Rit voltooid — opslaan</button>')+'<button class="btn btn-gray" onclick="closeWk()">Stoppen</button></div>';}
+  window.fp=function(){if(paused){st=Date.now()-pausedAt*1000;paused=false;iv=setInterval(tick,1000);}else{pausedAt=el();paused=true;clearInterval(iv);}render();};
+  window.fd=function(){clearInterval(iv);addL({n:nm||'Fietsen',t:'fiets',m:dur,date:new Date().toISOString()});closeWk();renderT();renderP();toast('Rit voltooid! 🚴');};
+  function tick(){if(!paused){if(rem()<=0){clearInterval(iv);triBeep();}render();}}
+  iv=setInterval(tick,1000);render();
 }
 
-function beep(freq, dur) {
-  try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    var osc = ctx.createOscillator();
-    var gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value = freq || 880;
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur || 0.15));
-    osc.start(); osc.stop(ctx.currentTime + (dur || 0.15));
-  } catch(e) {}
-}
-function triBeep() { beep(880,0.1); setTimeout(function(){beep(880,0.1);},160); setTimeout(function(){beep(1100,0.2);},320); }
-
-function toast(msg) {
-  var el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(function(){ el.classList.remove('show'); }, 3200);
+// ── LOPEN ────────────────────────────────────────────────────────────────────
+function startLopen(kid,nm){
+  var ld=LP[kid];if(!ld)return;
+  var ws=document.getElementById('wkov');ws.style.display='block';
+  var si=0,segSt=Date.now(),paused=false,pausedAt=0,iv,appSt=Date.now();
+  function sel(){return paused?pausedAt:Math.floor((Date.now()-segSt)/1000);}
+  function srem(){return Math.max(ld.segs[si].s-sel(),0);}
+  function render(){var seg=ld.segs[si],r=srem(),e=sel(),pct=1-r/seg.s,tp=(si+(pct))/ld.segs.length,bg=seg.g?'#e3f5ec':'#fef3c7',col=seg.g?'#1c7d4a':'#b45309',tagCls=seg.g?'seg-walk':'seg-run',tagTxt=seg.g?'WANDELEN / JOGGEN':'LOPEN';ws.innerHTML='<div class="wkh"><span class="wkh-close" onclick="closeWk()">✕</span><span class="wkh-title">'+nm+'</span><span class="wkh-meta">'+(si+1)+'/'+ld.segs.length+'</span></div><div class="wkbar"><div class="wkbar-fill" style="width:'+Math.round(tp*100)+'%;"></div></div><div class="wk-run-body" style="background:'+bg+';"><div class="seg-tag '+tagCls+'">'+tagTxt+'</div><div class="wk-nm" style="color:'+col+';">'+seg.n+'</div><div class="wk-sub">'+seg.i+'</div><div class="wk-big'+(r<6?' pulse':'')+'" style="color:'+col+';">'+ft(r)+'</div></div><div class="wk-btns">'+(r>0?'<button class="btn btn-gray" onclick="lp()">'+(paused?'▶ Hervatten':'⏸ Pauzeren')+'</button>':si<ld.segs.length-1?'<button class="btn btn-blue" onclick="ln()">Volgend segment →</button>':'<button class="btn btn-green" onclick="ld2()">✓ Sessie voltooid</button>')+'<button class="btn btn-gray" onclick="closeWk()">Stoppen</button></div>';}
+  window.lp=function(){if(paused){segSt=Date.now()-pausedAt*1000;paused=false;iv=setInterval(tick,500);}else{pausedAt=sel();paused=true;clearInterval(iv);}render();};
+  window.ln=function(){si++;segSt=Date.now();pausedAt=0;paused=false;clearInterval(iv);iv=setInterval(tick,500);beep(660);render();};
+  window.ld2=function(){clearInterval(iv);var min=Math.round((Date.now()-appSt)/60000);addL({n:nm,t:'lopen',m:min,date:new Date().toISOString()});closeWk();renderT();renderP();toast('Loopsessie voltooid! 🏃');};
+  function tick(){if(!paused){if(srem()<=0){clearInterval(iv);triBeep();}render();}}
+  iv=setInterval(tick,500);render();
 }
 
-// ─── TODAY ────────────────────────────────────────────────────────────────────
-function renderToday() {
-  var now = new Date();
-  var h = now.getHours();
-  var greeting = h < 12 ? 'Goedemorgen' : h < 18 ? 'Goedemiddag' : 'Goedenavond';
-  document.getElementById('today-title').textContent = greeting + ', Thiemen';
-  document.getElementById('today-date').textContent = now.toLocaleDateString('nl-BE', { weekday:'long', day:'numeric', month:'long' });
-
-  var body = document.getElementById('today-body');
-  var state = loadState();
-
-  if (!state.startDate) {
-    body.innerHTML = '<div class="card" style="text-align:center;padding:36px 20px;"><div style="font-size:44px;margin-bottom:14px;">🚴</div><div style="font-size:20px;font-weight:600;margin-bottom:8px;color:var(--text);">Welkom, Thiemen</div><div style="font-size:14px;color:var(--text3);margin-bottom:22px;">Stel je startdatum in om je plan te activeren.</div><button class="btn btn-primary" onclick="nav(\'profiel\')">Startdatum instellen →</button></div>';
-    return;
+// ── KRACHT ────────────────────────────────────────────────────────────────────
+function startKracht(kid,nm){
+  var wk=WK[kid];if(!wk)return;
+  var ws=document.getElementById('wkov');ws.style.display='block';
+  var round=0,ei=0,mode='ex',tSt=null,tDur=0,iv,appSt=Date.now();
+  function tTot(){return wk.rounds*wk.exs.length;}
+  function cStep(){return round*wk.exs.length+ei;}
+  function pct(){return cStep()/tTot();}
+  function cRem(){return tSt?Math.max(tDur-Math.floor((Date.now()-tSt)/1000),0):tDur;}
+  function startTimer(d){tDur=d;tSt=Date.now();iv=setInterval(function(){var r=cRem();if(r===3)beep(660);if(r<=0){clearInterval(iv);triBeep();}render();},500);}
+  function startEx(){var ex=wk.exs[ei];if(ex.sec)startTimer(ex.sec);}
+  function adv(){mode='ex';tSt=null;startEx();render();}
+  function render(){
+    if(mode==='done'){var dur=Math.round((Date.now()-appSt)/60000);ws.innerHTML='<div class="wkh"><span></span><span class="wkh-title">'+nm+'</span><span></span></div><div class="wk-complete"><div style="font-size:64px;margin-bottom:14px;">🏆</div><div class="wk-nm">Workout voltooid!</div><div class="wk-sub" style="margin-top:6px;">'+wk.rounds+' ronden · '+(wk.exs.length*wk.rounds)+' sets · '+dur+' min</div></div><div class="wk-btns"><button class="btn btn-green" onclick="kd(\''+kid+'\',\''+nm+'\','+dur+')">✓ Opslaan en afsluiten</button></div>';return;}
+    if(mode==='rest'||mode==='roundrest'){var r2=cRem(),nex=mode==='roundrest'?wk.exs[0]:wk.exs[ei],nd=EX[nex.id];ws.innerHTML='<div class="wkh"><span class="wkh-close" onclick="closeWk()">✕</span><span class="wkh-title">'+(mode==='roundrest'?'Pauze':'Rust')+'</span><span class="wkh-meta">Ronde '+(round+1)+'/'+wk.rounds+'</span></div><div class="wkbar"><div class="wkbar-fill" style="width:'+Math.round(pct()*100)+'%;"></div></div><div class="wk-rest-body"><div class="wk-rest-lbl">'+(mode==='roundrest'?'Einde ronde '+(round+1):'Herstel')+'</div><div class="wk-big grn'+(r2<6?' pulse':'')+'">'+ft(r2)+'</div><div class="wk-rest-next">Volgende: '+nd.n+(mode==='roundrest'?' — Ronde '+(round+2):'')+'</div></div><div class="wk-btns"><button class="btn btn-blue" onclick="ks()">Overslaan →</button><button class="btn btn-gray" onclick="closeWk()">Stoppen</button></div>';return;}
+    var ex=wk.exs[ei],exd=EX[ex.id],isTimed=!!ex.sec,r3=isTimed?cRem():0;
+    ws.innerHTML='<div class="wkh"><span class="wkh-close" onclick="closeWk()">✕</span><span class="wkh-title">Ronde '+(round+1)+'/'+wk.rounds+'</span><span class="wkh-meta">'+(ei+1)+'/'+wk.exs.length+'</span></div><div class="wkbar"><div class="wkbar-fill" style="width:'+Math.round(pct()*100)+'%;"></div></div><div class="wk-body"><div class="wk-nm">'+exd.n+'</div><div class="wk-sub">'+(ex.note||( isTimed?'Houd vast':'Voer uit'))+'</div>'+(isTimed?'<div class="wk-big blue'+(r3<6?' pulse':'')+'">'+ft(r3)+'</div>':'<div class="wk-big">'+ex.reps+'x</div><div style="font-size:16px;color:#8e8e93;margin-top:4px;">'+(ex.note||'herhalingen')+'</div>')+'<div class="wk-tip"><b>📌 Techniek</b><p>'+exd.t+'</p></div></div><div class="wk-btns">'+(isTimed&&r3>0?'<button class="btn btn-gray" onclick="kn()">Overslaan →</button>':'<button class="btn btn-blue" onclick="kn()">✓ Gedaan →</button>')+'<button class="btn btn-gray" onclick="closeWk()">Stoppen</button></div>';
   }
-
-  var info = getWeekInfo();
-  var html = '';
-
-  if (info.future) {
-    html = '<div class="rest-hero"><div class="rest-emoji">⏳</div><div class="rest-title">Start over ' + info.daysLeft + ' dag' + (info.daysLeft === 1 ? '' : 'en') + '</div><div class="rest-sub">Je eerste trainingsmaandag komt eraan</div></div>';
-    body.innerHTML = html; return;
-  }
-
-  var log = loadLog();
-  var weekStart = new Date(state.startDate);
-  weekStart.setDate(weekStart.getDate() + info.wi * 7); weekStart.setHours(0,0,0,0);
-  var weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 7);
-  var doneThisWeek = log.filter(function(e) { var d = new Date(e.date); return d >= weekStart && d < weekEnd; }).length;
-
-  html += '<div class="week-stats"><div class="ws-row"><span class="ws-label">Week ' + (info.wi+1) + ' · Fase ' + info.wk.p + '</span><span class="ws-label">' + doneThisWeek + ' / 3 sessies</span></div><div class="ws-bar"><div class="ws-fill" style="width:' + Math.round(doneThisWeek/3*100) + '%;"></div></div></div>';
-
-  var sess = null;
-  for (var i=0; i<info.wk.days.length; i++) { if (info.wk.days[i].d === info.dow) { sess = info.wk.days[i]; break; } }
-
-  if (!sess || sess.type === 'rest') {
-    html += '<div class="rest-hero"><div class="rest-emoji">😴</div><div class="rest-title">Rustdag</div><div class="rest-sub">Herstel is training. Lekker bewegen mag, maar geen intensieve sessie.</div></div>';
-  } else if (sess.type === 'fiets') {
-    html += '<div class="today-hero"><div class="hero-header" style="background:var(--accent);"><div class="hero-day">Vandaag · Week ' + (info.wi+1) + '</div><div class="hero-title">🚴 ' + sess.nm + '</div><div class="hero-meta"><span>⏱ ' + sess.min + ' min</span><span>Ochtend of namiddag</span></div></div><div class="hero-body"><div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Rit van ' + sess.min + ' minuten. Houd een comfortabel tempo — je kan een gesprek voeren. Neem water mee.</div><button class="btn btn-primary" onclick="startFiets(' + sess.min + ',\'' + sess.nm + '\')">⏱ Start fietsklok</button></div></div>';
-  } else {
-    var wkData = sess.type === 'kracht' ? WK[sess.wk] : LOOP[sess.wk];
-    var color = sess.type === 'kracht' ? '#b45309' : '#1c7d4a';
-    var icon = sess.type === 'kracht' ? '💪' : '🏃';
-    html += '<div class="today-hero"><div class="hero-header" style="background:' + color + ';"><div class="hero-day">Vandaag · Week ' + (info.wi+1) + '</div><div class="hero-title">' + icon + ' ' + sess.nm + '</div><div class="hero-meta"><span>⏱ ~' + sess.min + ' min</span><span>Na 21u</span></div></div><div class="hero-body">';
-
-    if (sess.type === 'kracht') {
-      html += '<div style="font-size:13px;color:var(--text3);margin-bottom:10px;">' + wkData.rounds + ' ronden &middot; ' + wkData.exs.length + ' oefeningen &middot; ' + wkData.restRound + 's rust tussen ronden</div><div class="ex-list">';
-      for (var j=0; j<wkData.exs.length; j++) {
-        var ex = wkData.exs[j];
-        var exd = EX[ex.id];
-        html += '<div class="ex-row"><div class="ex-num">' + (j+1) + '</div><div class="ex-info"><div class="ex-name">' + exd.nm + '</div><div class="ex-detail">' + (ex.sec ? ex.sec + 's' : ex.reps + (ex.note ? ' ' + ex.note : ' herh.')) + '</div></div></div>';
-      }
-      html += '</div><div style="margin-top:14px;"><button class="btn btn-primary" onclick="startKracht(\'' + sess.wk + '\',\'' + sess.nm + '\')">▶ Start workout</button></div>';
-    } else {
-      var loopData = LOOP[sess.wk];
-      var totalMin = Math.round(loopData.segs.reduce(function(a,s){ return a+s.sec; },0)/60);
-      html += '<div style="font-size:13px;color:var(--text3);margin-bottom:10px;">' + loopData.segs.length + ' segmenten &middot; ' + totalMin + ' min totaal</div><div class="ex-list">';
-      for (var k=0; k<loopData.segs.length; k++) {
-        var seg = loopData.segs[k];
-        var dotCol = seg.groen ? 'var(--green)' : 'var(--orange)';
-        html += '<div class="ex-row"><div style="width:8px;height:8px;border-radius:50%;background:' + dotCol + ';flex-shrink:0;margin-top:3px;"></div><div class="ex-info"><div class="ex-name">' + seg.nm + '</div><div class="ex-detail">' + Math.round(seg.sec/60) + ' min &middot; ' + seg.info + '</div></div></div>';
-      }
-      html += '</div><div style="margin-top:14px;"><button class="btn btn-primary" onclick="startLopen(\'' + sess.wk + '\',\'' + sess.nm + '\')">▶ Start loopsessie</button></div>';
-    }
-    html += '</div></div>';
-  }
-
-  // Upcoming
-  var upcoming = [];
-  for (var u=0; u<info.wk.days.length; u++) { if (info.wk.days[u].d > info.dow && info.wk.days[u].type !== 'rest') upcoming.push(info.wk.days[u]); }
-  if (upcoming.length) {
-    html += '<div class="section-label" style="margin-top:4px;">Later deze week</div>';
-    var dlbls = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
-    for (var v=0; v<upcoming.length; v++) {
-      var up = upcoming[v];
-      var dc = up.type==='kracht'?'d-kracht':up.type==='lopen'?'d-lopen':'d-fiets';
-      html += '<div class="log-row"><div class="log-dot ' + dc + '"></div><div class="log-info"><div class="log-name">' + dlbls[up.d] + ' — ' + up.nm + '</div></div><div class="log-dur">' + (up.min?up.min+'m':'') + '</div></div>';
-    }
-  }
-
-  body.innerHTML = html;
+  window.kn=function(){clearInterval(iv);tSt=null;var ex=wk.exs[ei],rd=ex.rest||0;
+    if(ei<wk.exs.length-1){ei++;if(rd>0){mode='rest';startTimer(rd);}else{mode='ex';startEx();}}
+    else{round++;if(round<wk.rounds){ei=0;mode='roundrest';startTimer(wk.rr);}else{mode='done';triBeep();}}render();};
+  window.ks=function(){clearInterval(iv);tSt=null;adv();};
+  window.kd=function(id,n,dur){addL({n:n,t:'kracht',m:dur,date:new Date().toISOString()});closeWk();renderT();renderP();toast(n+' voltooid! 💪');};
+  startEx();render();
 }
 
-// ─── SCHEMA ───────────────────────────────────────────────────────────────────
-var activePhase = 1;
-function renderSchema() {
-  var pills = document.getElementById('phase-pills');
-  var h = '';
-  for (var p=1; p<=3; p++) {
-    h += '<button class="phase-pill' + (activePhase===p?' active':'') + '" onclick="setPhase(' + p + ')">Fase ' + p + ' — wk ' + ((p-1)*4+1) + '–' + (p*4) + '</button>';
-  }
-  pills.innerHTML = h;
+// ── CLOSE ────────────────────────────────────────────────────────────────────
+function closeWk(){var ws=document.getElementById('wkov');ws.style.display='none';ws.innerHTML='';}
 
-  var body = document.getElementById('schema-body');
-  h = '';
-  for (var i=0; i<SCHEMA.length; i++) {
-    var wk = SCHEMA[i];
-    if (wk.p !== activePhase) continue;
-    h += '<div class="week-card"><div class="week-head"><span class="week-num">Week ' + wk.w + '</span><span class="week-tag">Fase ' + wk.p + '</span></div>';
-    for (var j=0; j<wk.days.length; j++) {
-      var s = wk.days[j];
-      var dc = s.type==='kracht'?'d-kracht':s.type==='lopen'?'d-lopen':s.type==='fiets'?'d-fiets':'d-rest';
-      var tappable = (s.wk || s.type==='fiets') ? 'tappable' : '';
-      var onclick = '';
-      if (s.type==='kracht' && s.wk) onclick = 'onclick="startKracht(\'' + s.wk + '\',\'' + s.nm + '\')"';
-      else if (s.type==='lopen' && s.wk) onclick = 'onclick="startLopen(\'' + s.wk + '\',\'' + s.nm + '\')"';
-      else if (s.type==='fiets' && s.min) onclick = 'onclick="startFiets(' + s.min + ',\'' + s.nm + '\')"';
-      h += '<div class="wd-row ' + (s.type==='rest'?'inactive ':'') + tappable + '" ' + onclick + '><div class="wd-day">' + s.lbl + '</div><div class="wd-dot ' + dc + '"></div><div class="wd-name">' + s.nm + '</div><div class="wd-dur">' + (s.min?s.min+'m':'') + '</div></div>';
-    }
-    h += '</div>';
-  }
-  body.innerHTML = h;
-}
-function setPhase(p) { activePhase = p; renderSchema(); }
-
-// ─── PROFIEL ─────────────────────────────────────────────────────────────────
-function renderProfiel() {
-  var state = loadState();
-  var inp = document.getElementById('start-input');
-  if (inp && state.startDate) inp.value = state.startDate;
-
-  var log = loadLog();
-  document.getElementById('p-sessions').textContent = log.length;
-
-  var rides = log.filter(function(e){ return e.type==='fiets'; });
-  document.getElementById('p-ride').textContent = rides.length ? Math.max.apply(null, rides.map(function(e){ return e.min||0; })) + ' min' : '—';
-
-  var wkTxt = '—';
-  if (state.startDate) {
-    var info = getWeekInfo();
-    if (info && !info.future && info.wi !== undefined) wkTxt = (info.wi+1) + ' van 12';
-  }
-  document.getElementById('p-week').textContent = wkTxt;
-
-  var logEl = document.getElementById('log-body');
-  if (!log.length) {
-    logEl.innerHTML = '<div class="empty-msg">Nog geen sessies. Voltooi een workout om te starten.</div>';
-    return;
-  }
-  var h = '';
-  for (var i=0; i<Math.min(log.length,20); i++) {
-    var e = log[i];
-    var dc = e.type==='kracht'?'d-kracht':e.type==='lopen'?'d-lopen':'d-fiets';
-    var dt = new Date(e.date).toLocaleDateString('nl-BE',{day:'numeric',month:'short'});
-    h += '<div class="log-row"><div class="log-dot ' + dc + '"></div><div class="log-info"><div class="log-name">' + e.nm + '</div><div class="log-date">' + dt + '</div></div><div class="log-dur">' + (e.min?e.min+'m':'') + '</div></div>';
-  }
-  logEl.innerHTML = h;
+// ── CALENDAR ─────────────────────────────────────────────────────────────────
+function exportCal(){
+  var s=getS();if(!s.startDate){alert('Stel eerst je startdatum in.');return;}
+  var sm=new Date(s.startDate);sm.setHours(0,0,0,0);
+  function p(n){return(n<10?'0':'')+n;}
+  function id(d,h,m){return d.getFullYear()+''+p(d.getMonth()+1)+''+p(d.getDate())+'T'+p(h||0)+''+p(m||0)+'00';}
+  var ev=[];
+  for(var i=0;i<SC.length;i++){var wk=SC[i],ws2=new Date(sm);ws2.setDate(ws2.getDate()+(wk.w-1)*7);
+    for(var j=0;j<wk.days.length;j++){var ss=wk.days[j];if(ss.t==='rest')continue;if(wk.w<=2&&ss.t==='fiets')continue;
+      var d=new Date(ws2);d.setDate(d.getDate()+(ss.d-1));var hr=ss.d===6?9:21,dur=ss.m||40,de=new Date(d);de.setMinutes(de.getMinutes()+dur);
+      ev.push('BEGIN:VEVENT\r\nDTSTART;TZID=Europe/Brussels:'+id(d,hr,0)+'\r\nDTEND;TZID=Europe/Brussels:'+id(de,de.getHours(),de.getMinutes())+'\r\nSUMMARY:'+ss.n+' — Week '+wk.w+'\r\nUID:c-w'+wk.w+'-d'+ss.d+'@1000km\r\nBEGIN:VALARM\r\nTRIGGER:-PT30M\r\nACTION:DISPLAY\r\nDESCRIPTION:Herinnering: '+ss.n+'\r\nEND:VALARM\r\nEND:VEVENT');}}
+  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//1000km//NL\r\nX-WR-CALNAME:1000km Training\r\nCALSCALE:GREGORIAN\r\n'+ev.join('\r\n')+'\r\nEND:VCALENDAR';
+  var b=new Blob([ics],{type:'text/calendar'}),u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download='1000km.ics';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);
+  alert('Agenda gedownload!\n\nOpen het bestand om alle sessies te importeren. Elke sessie heeft een herinnering 30 min van tevoren.');
 }
 
-function onDateChange(v) {
-  var s = loadState(); s.startDate = v; saveState(s);
-  renderToday(); renderProfiel();
-}
-
-// ─── FIETS TIMER ─────────────────────────────────────────────────────────────
-function startFiets(durationMin, name) {
-  var ws = document.getElementById('wk-screen');
-  ws.classList.remove('hidden');
-  var total = durationMin * 60;
-  var startT = Date.now();
-  var paused = false;
-  var pausedAt = 0;
-  var iv;
-
-  function elapsed() { return paused ? pausedAt : Math.floor((Date.now()-startT)/1000); }
-  function remaining() { return Math.max(total - elapsed(), 0); }
-
-  function render() {
-    var rem = remaining();
-    var el = elapsed();
-    var pct = Math.min(el/total, 1);
-    ws.innerHTML = '<div class="wk-header"><span class="wk-close" onclick="closeWk()">✕ Sluiten</span><span class="wk-title">Fietsen</span><span class="wk-rounds">' + durationMin + ' min</span></div><div class="wk-bar"><div class="wk-bar-fill" style="width:' + Math.round(pct*100) + '%;"></div></div><div class="wk-main"><div class="wk-exercise">🚴 Fietsrit</div><div class="wk-instruction">Comfortabel tempo — je kan praten</div><div class="wk-timer-big' + (rem<10?' pulse':'') + '">' + fmtTime(rem) + '</div><div style="font-size:14px;color:var(--text3);margin-top:10px;">Verstreken: ' + fmtTime(el) + '</div></div><div class="wk-actions">' + (rem > 0 ? '<button class="btn btn-ghost" onclick="fietsPause()">' + (paused?'▶ Hervatten':'⏸ Pauzeren') + '</button>' : '<button class="btn btn-green" onclick="fietsDone()">✓ Rit voltooid — opslaan</button>') + '<button class="btn btn-ghost" onclick="closeWk()">Stoppen</button></div>';
-  }
-
-  window.fietsPause = function() {
-    if (paused) { startT = Date.now() - pausedAt*1000; paused = false; iv = setInterval(tick, 1000); }
-    else { pausedAt = elapsed(); paused = true; clearInterval(iv); }
-    render();
-  };
-  window.fietsDone = function() {
-    clearInterval(iv);
-    addLog({ nm: name || 'Fietsen', type:'fiets', min: durationMin, date: new Date().toISOString() });
-    closeWk(); renderToday(); renderProfiel();
-    toast('Rit voltooid! 🚴 Goed gedaan.');
-  };
-
-  function tick() {
-    if (!paused) { if (remaining() <= 0) { clearInterval(iv); triBeep(); } render(); }
-  }
-
-  iv = setInterval(tick, 1000);
-  render();
-}
-
-// ─── LOPEN ────────────────────────────────────────────────────────────────────
-function startLopen(wkId, name) {
-  var ld = LOOP[wkId];
-  if (!ld) return;
-  var ws = document.getElementById('wk-screen');
-  ws.classList.remove('hidden');
-  var si = 0;
-  var segStart = Date.now();
-  var paused = false;
-  var pausedAt = 0;
-  var iv;
-  var appStart = Date.now();
-
-  function segElapsed() { return paused ? pausedAt : Math.floor((Date.now()-segStart)/1000); }
-  function segRemaining() { return Math.max(ld.segs[si].sec - segElapsed(), 0); }
-
-  function render() {
-    var seg = ld.segs[si];
-    var rem = segRemaining();
-    var el = segElapsed();
-    var pct = 1 - rem/seg.sec;
-    var totalPct = (si + pct) / ld.segs.length;
-    var tagCls = seg.groen ? 'seg-rust' : 'seg-lopen';
-    var tagTxt = seg.groen ? 'WANDELEN / JOGGEN' : 'LOPEN';
-    var bg = seg.groen ? 'var(--green-bg)' : 'var(--orange-bg)';
-    var col = seg.groen ? 'var(--green)' : 'var(--orange)';
-    ws.innerHTML = '<div class="wk-header"><span class="wk-close" onclick="closeWk()">✕</span><span class="wk-title">' + name + '</span><span class="wk-rounds">' + (si+1) + '/' + ld.segs.length + '</span></div><div class="wk-bar"><div class="wk-bar-fill" style="width:' + Math.round(totalPct*100) + '%;"></div></div><div class="wk-run-main" style="background:' + bg + ';min-height:52vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;text-align:center;"><div class="wk-seg-tag ' + tagCls + '">' + tagTxt + '</div><div class="wk-exercise" style="color:' + col + ';">' + seg.nm + '</div><div class="wk-instruction" style="color:var(--text2);">' + seg.info + '</div><div class="wk-timer-big' + (rem<6?' pulse':'') + '" style="color:' + col + ';">' + fmtTime(rem) + '</div></div><div class="wk-actions">' +
-      (rem > 0
-        ? '<button class="btn btn-ghost" onclick="loopPause()">' + (paused?'▶ Hervatten':'⏸ Pauzeren') + '</button>'
-        : si < ld.segs.length-1
-          ? '<button class="btn btn-primary" onclick="loopNext()">Volgend segment →</button>'
-          : '<button class="btn btn-green" onclick="loopDone()">✓ Sessie voltooid</button>'
-      ) + '<button class="btn btn-ghost" onclick="closeWk()">Stoppen</button></div>';
-  }
-
-  window.loopPause = function() {
-    if (paused) { segStart = Date.now() - pausedAt*1000; paused = false; iv = setInterval(tick, 500); }
-    else { pausedAt = segElapsed(); paused = true; clearInterval(iv); }
-    render();
-  };
-  window.loopNext = function() {
-    si++; segStart = Date.now(); pausedAt = 0; paused = false;
-    clearInterval(iv); iv = setInterval(tick, 500);
-    beep(660); render();
-  };
-  window.loopDone = function() {
-    clearInterval(iv);
-    var min = Math.round((Date.now()-appStart)/60000);
-    addLog({ nm: name, type:'lopen', min: min, date: new Date().toISOString() });
-    closeWk(); renderToday(); renderProfiel();
-    toast('Loopsessie voltooid! 🏃');
-  };
-
-  function tick() {
-    if (!paused) {
-      if (segRemaining() <= 0) { clearInterval(iv); triBeep(); }
-      render();
-    }
-  }
-  iv = setInterval(tick, 500);
-  render();
-}
-
-// ─── KRACHT ───────────────────────────────────────────────────────────────────
-function startKracht(wkId, name) {
-  var wk = WK[wkId];
-  if (!wk) return;
-  var ws = document.getElementById('wk-screen');
-  ws.classList.remove('hidden');
-
-  var round = 0;
-  var ei = 0;
-  var mode = 'ex';
-  var tStart = null;
-  var tDur = 0;
-  var iv;
-  var appStart = Date.now();
-
-  function totalSteps() { return wk.rounds * wk.exs.length; }
-  function curStep() { return round * wk.exs.length + ei; }
-  function pct() { return curStep() / totalSteps(); }
-  function curRemaining() {
-    if (!tStart) return tDur;
-    return Math.max(tDur - Math.floor((Date.now()-tStart)/1000), 0);
-  }
-
-  function render() {
-    if (mode === 'done') {
-      var dur = Math.round((Date.now()-appStart)/60000);
-      ws.innerHTML = '<div class="wk-header"><span></span><span class="wk-title">' + name + '</span><span></span></div><div class="wk-complete-main"><div class="wk-complete-icon">🏆</div><div class="wk-complete-title">Workout voltooid!</div><div class="wk-complete-sub">' + wk.rounds + ' ronden &middot; ' + (wk.exs.length*wk.rounds) + ' sets</div><div class="wk-stats-row"><div class="wk-stat-box"><div class="wk-stat-val">' + wk.rounds + '</div><div class="wk-stat-lbl">Ronden</div></div><div class="wk-stat-box"><div class="wk-stat-val">' + dur + '</div><div class="wk-stat-lbl">Minuten</div></div></div></div><div class="wk-actions"><button class="btn btn-green" onclick="krachtDone(\'' + wkId + '\',\'' + name + '\',' + dur + ')">✓ Opslaan en afsluiten</button></div>';
-      return;
-    }
-
-    if (mode === 'rest' || mode === 'roundrest') {
-      var rem2 = curRemaining();
-      var nex = mode==='roundrest' ? wk.exs[0] : wk.exs[ei];
-      var nd = EX[nex.id];
-      ws.innerHTML = '<div class="wk-header"><span class="wk-close" onclick="closeWk()">✕</span><span class="wk-title">' + (mode==='roundrest'?'Pauze ronde':'Rust') + '</span><span class="wk-rounds">Ronde ' + (round+1) + '/' + wk.rounds + '</span></div><div class="wk-bar"><div class="wk-bar-fill" style="width:' + Math.round(pct()*100) + '%;"></div></div><div class="wk-rest-main"><div class="wk-rest-label">' + (mode==='roundrest'?'Einde ronde '+( round+1):'Herstel') + '</div><div class="wk-rest-timer' + (rem2<6?' pulse':'') + '">' + fmtTime(rem2) + '</div><div class="wk-rest-next">Volgende: ' + nd.nm + (mode==='roundrest'?' — Ronde '+(round+2):'') + '</div></div><div class="wk-actions"><button class="btn btn-primary" onclick="krachtSkipRest()">Overslaan →</button><button class="btn btn-ghost" onclick="closeWk()">Stoppen</button></div>';
-      return;
-    }
-
-    // exercise
-    var ex = wk.exs[ei];
-    var exd = EX[ex.id];
-    var isTimed = !!ex.sec;
-    var rem3 = isTimed ? curRemaining() : 0;
-    ws.innerHTML = '<div class="wk-header"><span class="wk-close" onclick="closeWk()">✕</span><span class="wk-title">Ronde ' + (round+1) + '/' + wk.rounds + '</span><span class="wk-rounds">' + (ei+1) + '/' + wk.exs.length + '</span></div><div class="wk-bar"><div class="wk-bar-fill" style="width:' + Math.round(pct()*100) + '%;"></div></div><div class="wk-main"><div class="wk-exercise">' + exd.nm + '</div><div class="wk-instruction">' + (ex.note || (isTimed?'Houd vast':'Voer uit')) + '</div>' +
-      (isTimed
-        ? '<div class="wk-timer-big' + (rem3<6?' pulse':'') + '">' + fmtTime(rem3) + '</div>'
-        : '<div class="wk-reps-big">' + ex.reps + 'x</div><div class="wk-reps-label">' + (ex.note||'herhalingen') + '</div>'
-      ) +
-      '<div class="wk-tip"><div class="wk-tip-label">📌 Techniek</div><div class="wk-tip-text">' + exd.tip + '</div></div></div><div class="wk-actions">' +
-      (isTimed && rem3 > 0
-        ? '<button class="btn btn-ghost" onclick="krachtNext()">Overslaan →</button>'
-        : '<button class="btn btn-primary" onclick="krachtNext()">✓ Gedaan →</button>'
-      ) + '<button class="btn btn-ghost" onclick="closeWk()">Stoppen</button></div>';
-  }
-
-  function startTimer(dur) {
-    tDur = dur; tStart = Date.now();
-    iv = setInterval(function() {
-      var r = curRemaining();
-      if (r === 3) beep(660);
-      if (r <= 0) { clearInterval(iv); triBeep(); }
-      render();
-    }, 500);
-  }
-
-  function startExTimer() {
-    var ex = wk.exs[ei];
-    if (ex.sec) startTimer(ex.sec);
-  }
-
-  function advanceFromRest() {
-    mode = 'ex'; tStart = null;
-    startExTimer();
-    render();
-  }
-
-  window.krachtNext = function() {
-    clearInterval(iv); tStart = null;
-    var ex = wk.exs[ei];
-    var restDur = ex.rest || 0;
-    if (ei < wk.exs.length - 1) {
-      ei++;
-      if (restDur > 0) { mode = 'rest'; startTimer(restDur); }
-      else { mode = 'ex'; startExTimer(); }
-    } else {
-      round++;
-      if (round < wk.rounds) {
-        ei = 0; mode = 'roundrest'; startTimer(wk.restRound);
-      } else {
-        mode = 'done'; triBeep();
-      }
-    }
-    render();
-  };
-
-  window.krachtSkipRest = function() {
-    clearInterval(iv); tStart = null;
-    advanceFromRest();
-  };
-
-  window.krachtDone = function(id, nm, dur) {
-    addLog({ nm: nm, type:'kracht', min: dur, date: new Date().toISOString() });
-    closeWk(); renderToday(); renderProfiel();
-    toast(nm + ' voltooid! 💪');
-  };
-
-  startExTimer();
-  render();
-}
-
-// ─── CLOSE WORKOUT ────────────────────────────────────────────────────────────
-function closeWk() {
-  var ws = document.getElementById('wk-screen');
-  ws.classList.add('hidden');
-  ws.innerHTML = '';
-}
-
-// ─── CALENDAR EXPORT ─────────────────────────────────────────────────────────
-function exportCal() {
-  var state = loadState();
-  if (!state.startDate) { alert('Stel eerst je startdatum in via Profiel.'); return; }
-  var startMonday = new Date(state.startDate);
-  startMonday.setHours(0,0,0,0);
-
-  function p(n) { return (n<10?'0':'')+n; }
-  function icsLocal(d,h,m) { return d.getFullYear()+''+p(d.getMonth()+1)+''+p(d.getDate())+'T'+p(h||0)+''+p(m||0)+'00'; }
-
-  var evts = [];
-  for (var i=0; i<SCHEMA.length; i++) {
-    var wk = SCHEMA[i];
-    var wkStart = new Date(startMonday);
-    wkStart.setDate(wkStart.getDate() + (wk.w-1)*7);
-    for (var j=0; j<wk.days.length; j++) {
-      var s = wk.days[j];
-      if (s.type === 'rest') continue;
-      if (wk.w <= 2 && s.type === 'fiets') continue;
-      var d = new Date(wkStart);
-      d.setDate(d.getDate() + (s.d-1));
-      var hour = s.d===6 ? 9 : 21;
-      var dur = s.min || 40;
-      var dEnd = new Date(d);
-      dEnd.setMinutes(dEnd.getMinutes() + dur);
-      var uid = 'coach-w' + wk.w + '-d' + s.d + '@1000km';
-      evts.push('BEGIN:VEVENT\r\nDTSTART;TZID=Europe/Brussels:' + icsLocal(d,hour,0) + '\r\nDTEND;TZID=Europe/Brussels:' + icsLocal(dEnd,dEnd.getHours(),dEnd.getMinutes()) + '\r\nSUMMARY:' + s.nm + ' — Week ' + wk.w + '\r\nUID:' + uid + '\r\nBEGIN:VALARM\r\nTRIGGER:-PT30M\r\nACTION:DISPLAY\r\nDESCRIPTION:Herinnering: ' + s.nm + '\r\nEND:VALARM\r\nEND:VEVENT');
-    }
-  }
-
-  var ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//1000km Coach//NL\r\nX-WR-CALNAME:1000km Training\r\nCALSCALE:GREGORIAN\r\n' + evts.join('\r\n') + '\r\nEND:VCALENDAR';
-  var blob = new Blob([ics], { type:'text/calendar' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url; a.download = '1000km-training.ics';
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  alert('Agenda gedownload!\n\nOpen het bestand om alle 12 weken te importeren in Apple Agenda. Elke sessie heeft een herinnering 30 min van tevoren.');
-}
-
-// ─── INIT ────────────────────────────────────────────────────────────────────
-renderToday();
+// ── INIT ────────────────────────────────────────────────────────────────────
+renderT();
 </script>
 </body>
 </html>
