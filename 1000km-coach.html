@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="1000km">
+<title>1000km Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f2f2f7;
+  --card: #ffffff;
+  --card2: #f2f2f7;
+  --text: #1c1c1e;
+  --text2: #48484a;
+  --text3: #8e8e93;
+  --border: rgba(60,60,67,0.12);
+  --accent: #1a56db;
+  --accent-bg: #e8f0fd;
+  --green: #1c7d4a;
+  --green-bg: #e3f5ec;
+  --orange: #b45309;
+  --orange-bg: #fef3c7;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --tab-h: 82px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 20px);
+  --font: 'DM Sans', -apple-system, sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --card: #1c1c1e;
+    --card2: #2c2c2e;
+    --text: #ffffff;
+    --text2: #ebebf5cc;
+    --text3: #8e8e93;
+    --border: rgba(84,84,88,0.55);
+    --accent: #4e83f5;
+    --accent-bg: #1a2a4a;
+    --green: #34c759;
+    --green-bg: #0d2a1a;
+    --orange: #ffb340;
+    --orange-bg: #2a1f00;
+    --red: #ff453a;
+    --red-bg: #2a0a0a;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 16px; }
+
+/* SCREENS */
+#app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+.screen { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--tab-h) + 8px); }
+.screen.hidden { display: none; }
+.screen-full { position: fixed; inset: 0; z-index: 100; background: var(--bg); overflow-y: auto; }
+
+/* HEADER */
+.page-header { padding: calc(var(--safe-top) + 16px) 20px 12px; }
+.page-title { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; }
+.page-sub { font-size: 14px; color: var(--text3); margin-top: 2px; }
+
+/* NAV */
+.tab-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: var(--card); border-top: 0.5px solid var(--border); display: flex; height: var(--tab-h); padding-bottom: var(--safe-bottom); }
+.tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; padding-top: 8px; }
+.tab-icon { font-size: 22px; line-height: 1; }
+.tab-label { font-size: 10px; color: var(--text3); font-weight: 500; }
+.tab-item.active .tab-label { color: var(--accent); }
+.tab-item.active .tab-icon { filter: none; }
+
+/* CARDS */
+.card { background: var(--card); border-radius: 16px; padding: 16px; margin: 0 16px 12px; }
+.card-sm { padding: 12px 16px; }
+.section-label { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 20px 8px; margin-top: 4px; }
+
+/* BUTTONS */
+.btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 14px; border: none; cursor: pointer; font-family: var(--font); font-size: 16px; font-weight: 600; width: 100%; transition: opacity 0.15s, transform 0.1s; }
+.btn:active { opacity: 0.75; transform: scale(0.98); }
+.btn-primary { background: var(--accent); color: white; }
+.btn-ghost { background: var(--card2); color: var(--text); }
+.btn-danger { background: var(--red-bg); color: var(--red); }
+.btn-green { background: var(--green); color: white; }
+
+/* TODAY SCREEN */
+.today-hero { margin: 0 16px 12px; background: var(--card); border-radius: 20px; overflow: hidden; }
+.hero-header { background: var(--accent); padding: 20px; }
+.hero-day { font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+.hero-title { font-size: 26px; font-weight: 600; color: white; margin-top: 2px; }
+.hero-meta { font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 4px; display: flex; gap: 12px; }
+.hero-body { padding: 16px; }
+.hero-btn { margin-top: 4px; }
+.rest-hero { background: var(--card2); border-radius: 20px; margin: 0 16px 12px; padding: 28px 20px; text-align: center; }
+.rest-emoji { font-size: 36px; margin-bottom: 8px; }
+.rest-title { font-size: 20px; font-weight: 600; }
+.rest-sub { font-size: 14px; color: var(--text3); margin-top: 4px; }
+
+/* EXERCISE LIST */
+.ex-list { display: flex; flex-direction: column; gap: 1px; }
+.ex-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
+.ex-row:last-child { border-bottom: none; }
+.ex-num { font-family: var(--mono); font-size: 13px; color: var(--text3); width: 20px; }
+.ex-info { flex: 1; }
+.ex-name { font-size: 15px; font-weight: 500; }
+.ex-detail { font-size: 13px; color: var(--text3); margin-top: 1px; }
+.ex-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+
+/* WORKOUT TIMER SCREEN */
+.workout-screen { background: var(--bg); }
+.wk-header { display: flex; align-items: center; justify-content: space-between; padding: calc(var(--safe-top) + 16px) 20px 0; }
+.wk-close { font-size: 15px; color: var(--accent); cursor: pointer; padding: 4px 0; font-weight: 500; }
+.wk-title { font-size: 15px; font-weight: 600; }
+.wk-rounds { font-size: 14px; color: var(--text3); }
+.wk-progress { height: 3px; background: var(--border); margin: 16px 20px 0; border-radius: 2px; overflow: hidden; }
+.wk-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
+.wk-main { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; min-height: 55vh; text-align: center; }
+.wk-exercise { font-size: 30px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 8px; }
+.wk-instruction { font-size: 16px; color: var(--text3); margin-bottom: 32px; min-height: 24px; }
+.wk-timer-big { font-family: var(--mono); font-size: 80px; font-weight: 500; line-height: 1; color: var(--accent); letter-spacing: -2px; }
+.wk-reps-big { font-family: var(--mono); font-size: 80px; font-weight: 500; line-height: 1; color: var(--text); letter-spacing: -2px; }
+.wk-reps-label { font-size: 16px; color: var(--text3); margin-top: 4px; }
+.wk-tip { background: var(--accent-bg); border-radius: 12px; padding: 12px 16px; margin-top: 24px; text-align: left; width: 100%; max-width: 340px; }
+.wk-tip-label { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.wk-tip-text { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.wk-actions { padding: 0 20px 32px; display: flex; flex-direction: column; gap: 10px; }
+.wk-rest-screen { background: var(--green-bg); min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; }
+.wk-rest-label { font-size: 14px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.wk-rest-timer { font-family: var(--mono); font-size: 80px; font-weight: 500; color: var(--green); letter-spacing: -2px; }
+.wk-rest-next { font-size: 16px; color: var(--text2); margin-top: 12px; }
+.wk-segment-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; }
+.wk-complete { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; }
+.wk-complete-icon { font-size: 64px; margin-bottom: 16px; }
+.wk-complete-title { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+.wk-complete-sub { font-size: 16px; color: var(--text3); }
+.wk-complete-stats { display: flex; gap: 24px; margin: 24px 0; }
+.wk-stat { text-align: center; }
+.wk-stat-val { font-family: var(--mono); font-size: 28px; font-weight: 500; color: var(--accent); }
+.wk-stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* SCHEMA SCREEN */
+.phase-pills { display: flex; gap: 8px; padding: 0 16px 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.phase-pills::-webkit-scrollbar { display: none; }
+.phase-pill { flex-shrink: 0; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); color: var(--text3); background: transparent; font-family: var(--font); }
+.phase-pill.active { background: var(--accent); color: white; border-color: var(--accent); }
+.week-card { background: var(--card); border-radius: 16px; margin: 0 16px 10px; overflow: hidden; }
+.week-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); }
+.week-num { font-size: 13px; font-weight: 600; }
+.week-phase-tag { font-size: 11px; color: var(--text3); }
+.week-days { }
+.week-day-row { display: flex; align-items: center; padding: 10px 16px; border-bottom: 0.5px solid var(--border); gap: 12px; }
+.week-day-row:last-child { border-bottom: none; }
+.week-day-row.inactive { opacity: 0.4; }
+.wd-day { font-size: 12px; font-weight: 600; color: var(--text3); width: 28px; }
+.wd-name { flex: 1; font-size: 14px; font-weight: 500; }
+.wd-dur { font-size: 12px; color: var(--text3); }
+.wd-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-kracht { background: var(--orange); }
+.dot-lopen { background: var(--green); }
+.dot-fiets { background: var(--accent); }
+.dot-rest { background: var(--border); }
+
+/* INSTELLINGEN SCREEN */
+.settings-group { margin: 0 16px 16px; }
+.settings-row { background: var(--card); border-bottom: 0.5px solid var(--border); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+.settings-row:first-child { border-radius: 16px 16px 0 0; }
+.settings-row:last-child { border-radius: 0 0 16px 16px; border-bottom: none; }
+.settings-row:only-child { border-radius: 16px; border-bottom: none; }
+.settings-label { font-size: 15px; }
+.settings-value { font-size: 14px; color: var(--text3); }
+.settings-row input[type=date] { font-family: var(--font); font-size: 14px; color: var(--accent); background: transparent; border: none; outline: none; text-align: right; }
+
+/* LOG */
+.log-row { background: var(--card); border-radius: 12px; margin: 0 16px 8px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+.log-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.log-info { flex: 1; }
+.log-name { font-size: 14px; font-weight: 500; }
+.log-meta { font-size: 12px; color: var(--text3); margin-top: 1px; }
+.log-dur { font-family: var(--mono); font-size: 14px; color: var(--text3); }
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text3); font-size: 15px; }
+
+/* SCROLL indicators */
+.fade-top { position: sticky; top: 0; height: 1px; background: linear-gradient(var(--bg), transparent); z-index: 10; }
+
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.pulse { animation: pulse 1s infinite; }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- TODAY -->
+  <div id="screen-today" class="screen">
+    <div class="page-header">
+      <div class="page-title" id="today-greeting">Goedemorgen</div>
+      <div class="page-sub" id="today-date"></div>
+    </div>
+    <div id="today-content"></div>
+  </div>
+
+  <!-- SCHEMA -->
+  <div id="screen-schema" class="screen hidden">
+    <div class="page-header">
+      <div class="page-title">12-weken plan</div>
+      <div class="page-sub">Tik op een sessie om te starten</div>
+    </div>
+    <div class="phase-pills" id="phase-pills"></div>
+    <div id="schema-content"></div>
+  </div>
+
+  <!-- INSTELLINGEN -->
+  <div id="screen-settings" class="screen hidden">
+    <div class="page-header">
+      <div class="page-title">Instellingen</div>
+    </div>
+    <div class="section-label">Startdatum</div>
+    <div class="settings-group">
+      <div class="settings-row">
+        <span class="settings-label">Eerste trainingsmaandag</span>
+        <input type="date" id="start-date-input" onchange="setStartDate(this.value)">
+      </div>
+    </div>
+    <div class="section-label">Agenda</div>
+    <div class="settings-group">
+      <div class="settings-row" onclick="exportCalendar()" style="cursor:pointer;">
+        <span class="settings-label">📅 Exporteer naar Apple Agenda</span>
+        <span class="settings-value">→</span>
+      </div>
+    </div>
+    <div class="section-label">Voortgang</div>
+    <div class="settings-group">
+      <div class="settings-row">
+        <span class="settings-label">Sessies voltooid</span>
+        <span class="settings-value" id="stats-sessions">0</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Huidige week</span>
+        <span class="settings-value" id="stats-week">—</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Langste fietsrit</span>
+        <span class="settings-value" id="stats-ride">—</span>
+      </div>
+    </div>
+    <div class="section-label">Logboek</div>
+    <div id="log-list"></div>
+    <div style="height:16px;"></div>
+    <div style="padding: 0 16px;">
+      <button class="btn btn-danger" onclick="if(confirm('Zeker? Dit wist je volledige logboek.')){clearLog()}">Logboek wissen</button>
+    </div>
+    <div style="height:24px;"></div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <div class="tab-item active" id="tab-today" onclick="showScreen('today')">
+      <div class="tab-icon">🏠</div>
+      <div class="tab-label">Vandaag</div>
+    </div>
+    <div class="tab-item" id="tab-schema" onclick="showScreen('schema')">
+      <div class="tab-icon">📋</div>
+      <div class="tab-label">Schema</div>
+    </div>
+    <div class="tab-item" id="tab-settings" onclick="showScreen('settings')">
+      <div class="tab-icon">⚙️</div>
+      <div class="tab-label">Profiel</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKOUT SCREEN (overlay) -->
+<div id="workout-screen" class="screen-full hidden"></div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const EXERCISES = {
+  squat:           { name: 'Squat', tip: 'Voeten schouderbreedte, tenen licht uit. Zak tot dijen parallel, knieën naar buiten. Hak in de grond.' },
+  pushup:          { name: 'Push-up', tip: 'Rechte plank van hoofd tot hielen. Ellebogen schuin achterwaarts, niet recht opzij. Op knieën mag.' },
+  plank:           { name: 'Plank', tip: 'Onderarmen + tenen. Buik aanspannen alsof je een stomp verwacht. Heupen niet zakken. Adem door.' },
+  lunge:           { name: 'Lunge', tip: 'Grote stap vooruit, recht omlaag zakken. Voorste knie boven je voet. Romp rechtop.' },
+  mountainclimber: { name: 'Mountain climbers', tip: 'Push-up positie. Knieën afwisselend naar borst. Heupen laag houden, tempo opbouwen.' },
+  glutebridge:     { name: 'Glute bridge', tip: 'Op rug, knieën gebogen. Heupen omhoog tot rechte lijn. Billen aanspannen bovenaan, 1 sec houden.' },
+  jumpsquat:       { name: 'Jump squat', tip: 'Gewone squat, maar duw explosief omhoog en spring. Land zacht op de ballen van je voeten.' },
+  reverselunge:    { name: 'Reverse lunge', tip: 'Stap achterwaarts. Achterknie bijna de grond. Meer kniestabiel dan voorwaartse lunge.' },
+  burpee:          { name: 'Burpee', tip: 'Staand → handen grond → voeten achteruit (plankpositie) → voeten terug → spring omhoog met armen. Ritmisch.' },
+  dip:             { name: 'Dip (stoel)', tip: 'Handen op rand stoel achter je, benen gestrekt. Buig armen tot 90°. Rug dicht bij de stoel.' },
+};
+
+function makeKrachtWorkout(rounds, exercises) {
+  return { type: 'kracht', rounds, restBetweenRounds: 90, exercises };
+}
+
+const WORKOUTS = {
+  krachtA1: makeKrachtWorkout(3, [
+    { id:'squat', reps:20, rest:30 },
+    { id:'pushup', reps:12, rest:30 },
+    { id:'plank', duration:40, rest:30 },
+    { id:'lunge', reps:12, note:'per been', rest:30 },
+    { id:'mountainclimber', reps:25, rest:30 },
+    { id:'glutebridge', reps:20, rest:0 },
+  ]),
+  krachtB1: makeKrachtWorkout(3, [
+    { id:'glutebridge', reps:20, rest:30 },
+    { id:'squat', reps:20, rest:30 },
+    { id:'plank', duration:40, rest:30 },
+    { id:'pushup', reps:12, rest:30 },
+    { id:'lunge', reps:12, note:'per been', rest:30 },
+    { id:'mountainclimber', reps:25, rest:0 },
+  ]),
+  krachtA2: makeKrachtWorkout(3, [
+    { id:'jumpsquat', reps:15, rest:30 },
+    { id:'pushup', reps:15, rest:30 },
+    { id:'plank', duration:60, rest:30 },
+    { id:'reverselunge', reps:15, note:'per been', rest:30 },
+    { id:'burpee', reps:10, rest:30 },
+    { id:'dip', reps:12, rest:0 },
+  ]),
+  krachtB2: makeKrachtWorkout(3, [
+    { id:'dip', reps:12, rest:30 },
+    { id:'jumpsquat', reps:15, rest:30 },
+    { id:'burpee', reps:10, rest:30 },
+    { id:'plank', duration:60, rest:30 },
+    { id:'reverselunge', reps:15, note:'per been', rest:30 },
+    { id:'pushup', reps:15, rest:0 },
+  ]),
+  krachtA3: makeKrachtWorkout(4, [
+    { id:'jumpsquat', reps:15, rest:30 },
+    { id:'pushup', reps:15, rest:30 },
+    { id:'plank', duration:60, rest:30 },
+    { id:'reverselunge', reps:15, note:'per been', rest:30 },
+    { id:'burpee', reps:10, rest:30 },
+    { id:'dip', reps:12, rest:0 },
+  ]),
+  krachtB3: makeKrachtWorkout(4, [
+    { id:'dip', reps:12, rest:30 },
+    { id:'jumpsquat', reps:15, rest:30 },
+    { id:'burpee', reps:10, rest:30 },
+    { id:'plank', duration:60, rest:30 },
+    { id:'reverselunge', reps:15, note:'per been', rest:30 },
+    { id:'pushup', reps:15, rest:0 },
+  ]),
+};
+
+function buildLoopSegments(intervals, intervalDuration, restDuration) {
+  const segs = [{ name:'Opwarmen', instruction:'Rustig wandelen', duration:300, color:'green' }];
+  for (let i=0; i<intervals; i++) {
+    segs.push({ name:`Interval ${i+1}/${intervals} — LOPEN`, instruction:'Stevig lopen — je kan nog praten maar het kost moeite', duration:intervalDuration, color:'orange' });
+    if (i < intervals-1) segs.push({ name:`Herstel ${i+1}/${intervals-1}`, instruction:'Rustig joggen of wandelen', duration:restDuration, color:'green' });
+  }
+  segs.push({ name:'Afkoelen', instruction:'Rustig wandelen', duration:300, color:'green' });
+  return segs;
+}
+
+function buildContinuousLoop(minutes) {
+  return [
+    { name:'Inlopen', instruction:'Rustig joggen — opwarmen', duration:300, color:'green' },
+    { name:'Doorlopen', instruction:`${minutes} min aan constant tempo — je kan praten maar het is niet makkelijk`, duration:minutes*60, color:'orange' },
+    { name:'Uitlopen', instruction:'Rustig wandelen — afkoelen', duration:300, color:'green' },
+  ];
+}
+
+const LOPEN_WORKOUTS = {
+  lopen1: { type:'lopen', name:'Lopen — interval', duurMin:28, segments: buildLoopSegments(6,120,60) },
+  lopen2: { type:'lopen', name:'Lopen — interval+', duurMin:36, segments: buildLoopSegments(3,480,120) },
+  lopen3: { type:'lopen', name:'Doorlopen 35 min', duurMin:45, segments: buildContinuousLoop(35) },
+};
+
+// Schedule: 12 weeks
+// Days: 1=ma, 3=wo, 5=vr, 6=za
+const WEEK_SCHEDULE = [
+  // Fase 1: weeks 1-4
+  {w:1, phase:1, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:35,wk:'krachtA1'},
+    {day:3,label:'Wo',name:'Lopen',type:'lopen',dur:28,wk:'lopen1'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:35,wk:'krachtB1'},
+    {day:6,label:'Za',name:'Rust (fiets v.a. week 3)',type:'rest',dur:null,wk:null},
+  ]},
+  {w:2, phase:1, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:35,wk:'krachtA1'},
+    {day:3,label:'Wo',name:'Lopen',type:'lopen',dur:28,wk:'lopen1'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:35,wk:'krachtB1'},
+    {day:6,label:'Za',name:'Rust',type:'rest',dur:null,wk:null},
+  ]},
+  {w:3, phase:1, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:35,wk:'krachtA1'},
+    {day:3,label:'Wo',name:'Lopen',type:'lopen',dur:28,wk:'lopen1'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:35,wk:'krachtB1'},
+    {day:6,label:'Za',name:'Fietsen — 35 min',type:'fiets',dur:35,wk:null},
+  ]},
+  {w:4, phase:1, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:35,wk:'krachtA1'},
+    {day:3,label:'Wo',name:'Lopen',type:'lopen',dur:28,wk:'lopen1'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:35,wk:'krachtB1'},
+    {day:6,label:'Za',name:'Fietsen — 45 min',type:'fiets',dur:45,wk:null},
+  ]},
+  // Fase 2: weeks 5-8
+  {w:5, phase:2, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:40,wk:'krachtA2'},
+    {day:3,label:'Wo',name:'Lopen — interval+',type:'lopen',dur:36,wk:'lopen2'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:40,wk:'krachtB2'},
+    {day:6,label:'Za',name:'Fietsen — 60 min',type:'fiets',dur:60,wk:null},
+  ]},
+  {w:6, phase:2, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:40,wk:'krachtA2'},
+    {day:3,label:'Wo',name:'Lopen — interval+',type:'lopen',dur:36,wk:'lopen2'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:40,wk:'krachtB2'},
+    {day:6,label:'Za',name:'Fietsen — 60 min',type:'fiets',dur:60,wk:null},
+  ]},
+  {w:7, phase:2, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:40,wk:'krachtA2'},
+    {day:3,label:'Wo',name:'Lopen — interval+',type:'lopen',dur:36,wk:'lopen2'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:40,wk:'krachtB2'},
+    {day:6,label:'Za',name:'Fietsen — 75 min',type:'fiets',dur:75,wk:null},
+  ]},
+  {w:8, phase:2, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:40,wk:'krachtA2'},
+    {day:3,label:'Wo',name:'Lopen — interval+',type:'lopen',dur:36,wk:'lopen2'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:40,wk:'krachtB2'},
+    {day:6,label:'Za',name:'Fietsen — 75 min',type:'fiets',dur:75,wk:null},
+  ]},
+  // Fase 3: weeks 9-12
+  {w:9, phase:3, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:45,wk:'krachtA3'},
+    {day:3,label:'Wo',name:'Doorlopen 35 min',type:'lopen',dur:45,wk:'lopen3'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:45,wk:'krachtB3'},
+    {day:6,label:'Za',name:'Lange rit — 90 min',type:'fiets',dur:90,wk:null},
+  ]},
+  {w:10, phase:3, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:45,wk:'krachtA3'},
+    {day:3,label:'Wo',name:'Doorlopen 35 min',type:'lopen',dur:45,wk:'lopen3'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:45,wk:'krachtB3'},
+    {day:6,label:'Za',name:'Lange rit — 90 min',type:'fiets',dur:90,wk:null},
+  ]},
+  {w:11, phase:3, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:45,wk:'krachtA3'},
+    {day:3,label:'Wo',name:'Doorlopen 35 min',type:'lopen',dur:45,wk:'lopen3'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:45,wk:'krachtB3'},
+    {day:6,label:'Za',name:'Lange rit — 2 uur',type:'fiets',dur:120,wk:null},
+  ]},
+  {w:12, phase:3, sessions:[
+    {day:1,label:'Ma',name:'Kracht A',type:'kracht',dur:45,wk:'krachtA3'},
+    {day:3,label:'Wo',name:'Doorlopen 35 min',type:'lopen',dur:45,wk:'lopen3'},
+    {day:5,label:'Vr',name:'Kracht B',type:'kracht',dur:45,wk:'krachtB3'},
+    {day:6,label:'Za',name:'Lange rit — 2 uur',type:'fiets',dur:120,wk:null},
+  ]},
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+function getState() {
+  try { return JSON.parse(localStorage.getItem('coach_state') || '{}'); } catch { return {}; }
+}
+function saveState(s) {
+  try { localStorage.setItem('coach_state', JSON.stringify(s)); } catch {}
+}
+function getLog() {
+  try { return JSON.parse(localStorage.getItem('coach_log') || '[]'); } catch { return []; }
+}
+function appendLog(entry) {
+  const log = getLog();
+  log.unshift(entry);
+  try { localStorage.setItem('coach_log', JSON.stringify(log.slice(0,50))); } catch {}
+}
+function clearLog() {
+  try { localStorage.removeItem('coach_log'); } catch {}
+  renderSettings();
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+let activeScreen = 'today';
+function showScreen(id) {
+  ['today','schema','settings'].forEach(s => {
+    document.getElementById('screen-'+s).classList.toggle('hidden', s!==id);
+    document.getElementById('tab-'+s).classList.toggle('active', s===id);
+  });
+  activeScreen = id;
+  if (id === 'today') renderToday();
+  if (id === 'schema') renderSchema();
+  if (id === 'settings') renderSettings();
+}
+
+// ─── TODAY ────────────────────────────────────────────────────────────────────
+function getCurrentWeekAndSession() {
+  const state = getState();
+  if (!state.startDate) return null;
+  const start = new Date(state.startDate);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  start.setHours(0,0,0,0);
+  const diffDays = Math.floor((today - start) / 86400000);
+  if (diffDays < 0) return { future: true, daysUntil: -diffDays };
+  const weekIdx = Math.min(Math.floor(diffDays / 7), 11);
+  const weekData = WEEK_SCHEDULE[weekIdx];
+  const todayDow = today.getDay(); // 0=sun,1=mon,...,6=sat
+  const session = weekData.sessions.find(s => s.day === todayDow) || null;
+  return { weekIdx, weekData, session, todayDow };
+}
+
+function renderToday() {
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Goedemorgen' : hour < 18 ? 'Goedemiddag' : 'Goedenavond';
+  document.getElementById('today-greeting').textContent = greeting + ', Thiemen';
+  document.getElementById('today-date').textContent = now.toLocaleDateString('nl-BE', {weekday:'long', day:'numeric', month:'long'});
+
+  const state = getState();
+  const content = document.getElementById('today-content');
+
+  if (!state.startDate) {
+    content.innerHTML = `
+      <div class="card" style="text-align:center; padding:32px 20px;">
+        <div style="font-size:40px;margin-bottom:12px;">🚴</div>
+        <div style="font-size:20px;font-weight:600;margin-bottom:8px;">Welkom, Thiemen</div>
+        <div style="font-size:14px;color:var(--text3);margin-bottom:20px;">Stel je startdatum in om je plan te activeren.</div>
+        <button class="btn btn-primary" onclick="showScreen('settings')">Startdatum instellen →</button>
+      </div>`;
+    return;
+  }
+
+  const curr = getCurrentWeekAndSession();
+  if (!curr) { content.innerHTML = ''; return; }
+
+  if (curr.future) {
+    content.innerHTML = `<div class="rest-hero">
+      <div class="rest-emoji">⏳</div>
+      <div class="rest-title">Plan start over ${curr.daysUntil} dag${curr.daysUntil===1?'':'en'}</div>
+      <div class="rest-sub">Je eerste trainingsmaandag komt eraan</div>
+    </div>`;
+    return;
+  }
+
+  const weekNum = curr.weekIdx + 1;
+  const phase = curr.weekData.phase;
+  const sess = curr.session;
+
+  // Week stats bar
+  const log = getLog();
+  const weekStart = new Date(state.startDate);
+  weekStart.setDate(weekStart.getDate() + curr.weekIdx * 7);
+  weekStart.setHours(0,0,0,0);
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate()+7);
+  const sessionsThisWeek = log.filter(e => { const d=new Date(e.date); return d>=weekStart&&d<weekEnd; }).length;
+
+  let html = `<div class="card card-sm" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:13px;color:var(--text3);">Week ${weekNum} · Fase ${phase}</div>
+      <div style="font-size:13px;color:var(--text3);">${sessionsThisWeek} / 3 sessies gedaan</div>
+    </div>
+    <div style="margin-top:8px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+      <div style="height:100%;background:var(--accent);width:${Math.round(sessionsThisWeek/3*100)}%;border-radius:2px;"></div>
+    </div>
+  </div>`;
+
+  if (!sess || sess.type === 'rest') {
+    html += `<div class="rest-hero">
+      <div class="rest-emoji">😴</div>
+      <div class="rest-title">Rustdag</div>
+      <div class="rest-sub">Herstel is training. Blijf actief maar ga niet sporten.</div>
+    </div>`;
+  } else if (sess.type === 'fiets') {
+    html += `<div class="today-hero">
+      <div class="hero-header" style="background:#1a56db;">
+        <div class="hero-day">Vandaag · Week ${weekNum}</div>
+        <div class="hero-title">🚴 ${sess.name}</div>
+        <div class="hero-meta"><span>⏱ ${sess.dur} min</span><span>Fietsen</span></div>
+      </div>
+      <div class="hero-body">
+        <div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px;">
+          Rit van ${sess.dur} minuten aan rustig tot matig tempo. Houd een tempo dat je kan volhouden — je kan een gesprek voeren. Neem water mee.
+        </div>
+        <button class="btn btn-ghost" onclick="startFietsTimer(${sess.dur})">⏱ Start fietsklok</button>
+      </div>
+    </div>`;
+  } else {
+    const typeColor = sess.type==='kracht' ? '#b45309' : '#1c7d4a';
+    const typeBg = sess.type==='kracht' ? '#b45309' : '#1c7d4a';
+    html += `<div class="today-hero">
+      <div class="hero-header" style="background:${typeBg};">
+        <div class="hero-day">Vandaag · Week ${weekNum}</div>
+        <div class="hero-title">${sess.type==='kracht'?'💪':'🏃'} ${sess.name}</div>
+        <div class="hero-meta"><span>⏱ ~${sess.dur} min</span><span>Na 21u</span></div>
+      </div>
+      <div class="hero-body">`;
+
+    if (sess.type === 'kracht' && sess.wk) {
+      const wk = WORKOUTS[sess.wk];
+      html += `<div style="font-size:13px;color:var(--text3);margin-bottom:10px;">${wk.rounds} ronden · ${wk.exercises.length} oefeningen · ${wk.restBetweenRounds}s rust tussen ronden</div>
+        <div class="ex-list">`;
+      wk.exercises.forEach((ex,i) => {
+        const e = EXERCISES[ex.id];
+        html += `<div class="ex-row">
+          <div class="ex-num">${i+1}</div>
+          <div class="ex-info">
+            <div class="ex-name">${e.name}</div>
+            <div class="ex-detail">${ex.duration ? ex.duration+'s' : ex.reps + (ex.note?' '+ex.note:' herh.')}</div>
+          </div>
+        </div>`;
+      });
+      html += `</div><div class="hero-btn" style="margin-top:14px;"><button class="btn btn-primary" onclick="startWorkout('${sess.wk}','${sess.name}')">▶ Start workout</button></div>`;
+    } else if (sess.type === 'lopen' && sess.wk) {
+      const lw = LOPEN_WORKOUTS[sess.wk];
+      const totalMin = Math.round(lw.segments.reduce((a,s)=>a+s.duration,0)/60);
+      html += `<div style="font-size:13px;color:var(--text3);margin-bottom:10px;">${lw.segments.length} segmenten · ${totalMin} min totaal</div>
+        <div class="ex-list">`;
+      lw.segments.forEach((seg,i) => {
+        const col = seg.color==='orange'?'var(--orange)':'var(--green)';
+        html += `<div class="ex-row">
+          <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;margin-top:2px;"></div>
+          <div class="ex-info">
+            <div class="ex-name">${seg.name}</div>
+            <div class="ex-detail">${Math.round(seg.duration/60)} min · ${seg.instruction.split('—')[0].trim()}</div>
+          </div>
+        </div>`;
+      });
+      html += `</div><div class="hero-btn" style="margin-top:14px;"><button class="btn btn-primary" onclick="startLoopWorkout('${sess.wk}','${sess.name}')">▶ Start loopsessie</button></div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // Upcoming this week
+  const todayDow = new Date().getDay();
+  const upcoming = curr.weekData.sessions.filter(s => s.day > todayDow && s.type !== 'rest');
+  if (upcoming.length) {
+    html += `<div class="section-label" style="margin-top:8px;">Later deze week</div>`;
+    upcoming.forEach(s => {
+      const days = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+      const col = s.type==='kracht'?'dot-kracht':s.type==='lopen'?'dot-lopen':'dot-fiets';
+      html += `<div class="log-row"><div class="log-dot ${col}"></div><div class="log-info"><div class="log-name">${days[s.day]} — ${s.name}</div></div><div class="log-dur">${s.dur?s.dur+'m':''}</div></div>`;
+    });
+  }
+
+  content.innerHTML = html;
+}
+
+// ─── SCHEMA ───────────────────────────────────────────────────────────────────
+let activePhase = 1;
+function renderSchema() {
+  const pillsEl = document.getElementById('phase-pills');
+  pillsEl.innerHTML = [1,2,3].map(p =>
+    `<button class="phase-pill ${activePhase===p?'active':''}" onclick="setPhase(${p})">Fase ${p} — week ${(p-1)*4+1}–${p*4}</button>`
+  ).join('');
+  const content = document.getElementById('schema-content');
+  const weeks = WEEK_SCHEDULE.filter(w => w.phase === activePhase);
+  content.innerHTML = weeks.map(wk => {
+    const sessions = wk.sessions;
+    const dayRows = sessions.map(s => {
+      const dot = s.type==='kracht'?'dot-kracht':s.type==='lopen'?'dot-lopen':s.type==='fiets'?'dot-fiets':'dot-rest';
+      const isInactive = s.type==='rest';
+      const clickable = s.wk ? `onclick="startWorkout('${s.wk}','${s.name}')"` : s.type==='fiets'&&s.dur ? `onclick="startFietsTimer(${s.dur})"` : s.type==='lopen'&&s.wk ? `onclick="startLoopWorkout('${s.wk}','${s.name}')"` : '';
+      return `<div class="week-day-row ${isInactive?'inactive':''}" ${clickable} style="${clickable?'cursor:pointer;':''}">
+        <div class="wd-day">${s.label}</div>
+        <div class="wd-dot ${dot}"></div>
+        <div class="wd-name">${s.name}</div>
+        <div class="wd-dur">${s.dur?s.dur+'m':''}</div>
+      </div>`;
+    }).join('');
+    return `<div class="week-card">
+      <div class="week-header"><span class="week-num">Week ${wk.w}</span><span class="week-phase-tag">Fase ${wk.phase}</span></div>
+      <div class="week-days">${dayRows}</div>
+    </div>`;
+  }).join('');
+}
+function setPhase(p) { activePhase = p; renderSchema(); }
+
+// ─── SETTINGS ─────────────────────────────────────────────────────────────────
+function setStartDate(val) {
+  const state = getState();
+  state.startDate = val;
+  saveState(state);
+  renderToday();
+  renderSettings();
+}
+function renderSettings() {
+  const state = getState();
+  const input = document.getElementById('start-date-input');
+  if (input) input.value = state.startDate || '';
+
+  const log = getLog();
+  document.getElementById('stats-sessions').textContent = log.length;
+  const rides = log.filter(e=>e.type==='fiets');
+  document.getElementById('stats-ride').textContent = rides.length ? Math.max(...rides.map(e=>e.dur||0))+'m' : '—';
+
+  let weekText = '—';
+  if (state.startDate) {
+    const curr = getCurrentWeekAndSession();
+    if (curr && !curr.future && curr.weekIdx !== undefined) weekText = (curr.weekIdx+1)+' van 12';
+  }
+  document.getElementById('stats-week').textContent = weekText;
+
+  const logEl = document.getElementById('log-list');
+  if (!log.length) {
+    logEl.innerHTML = '<div class="empty-state">Nog geen sessies gelogd.<br>Voltooi een workout om te starten.</div>';
+    return;
+  }
+  logEl.innerHTML = log.slice(0,15).map(e => {
+    const dot = e.type==='kracht'?'dot-kracht':e.type==='lopen'?'dot-lopen':'dot-fiets';
+    const d = new Date(e.date).toLocaleDateString('nl-BE',{day:'numeric',month:'short'});
+    return `<div class="log-row"><div class="log-dot ${dot}"></div><div class="log-info"><div class="log-name">${e.name}</div><div class="log-meta">${d}</div></div><div class="log-dur">${e.dur?e.dur+'m':''}</div></div>`;
+  }).join('');
+}
+
+// ─── AUDIO BEEP ───────────────────────────────────────────────────────────────
+function beep(freq=880, dur=0.15) {
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.start(); osc.stop(ctx.currentTime + dur);
+  } catch(e) {}
+}
+function tripleBeep() { beep(880,0.1); setTimeout(()=>beep(880,0.1),150); setTimeout(()=>beep(1100,0.2),300); }
+
+// ─── FIETS TIMER ─────────────────────────────────────────────────────────────
+function startFietsTimer(durationMin) {
+  const ws = document.getElementById('workout-screen');
+  ws.classList.remove('hidden');
+  const totalSec = durationMin * 60;
+  let startTime = Date.now();
+  let elapsed = 0;
+  let paused = false;
+  let pauseStart = 0;
+  let timerInterval;
+
+  function render() {
+    const pct = Math.min(elapsed / totalSec, 1);
+    const remaining = Math.max(totalSec - elapsed, 0);
+    const rem = formatTime(remaining);
+    const elStr = formatTime(elapsed);
+    ws.innerHTML = `
+      <div class="wk-header" style="background:var(--card);">
+        <span class="wk-close" onclick="closeWorkout()">✕ Sluiten</span>
+        <span class="wk-title">Fietsen</span>
+        <span class="wk-rounds">${durationMin} min</span>
+      </div>
+      <div class="wk-progress"><div class="wk-progress-fill" style="width:${Math.round(pct*100)}%"></div></div>
+      <div class="wk-main">
+        <div class="wk-exercise">🚴 Fietsrit</div>
+        <div class="wk-instruction">Rustig tot matig tempo · je kan een gesprek voeren</div>
+        <div class="wk-timer-big">${rem}</div>
+        <div style="font-size:14px;color:var(--text3);margin-top:8px;">Verstreken: ${elStr}</div>
+      </div>
+      <div class="wk-actions">
+        ${remaining > 0
+          ? `<button class="btn btn-ghost" onclick="togglePauseFiets()">${paused ? '▶ Hervatten' : '⏸ Pauzeren'}</button>`
+          : `<button class="btn btn-green" onclick="completeFiets(${durationMin})">✓ Rit voltooid — opslaan</button>`
+        }
+        <button class="btn btn-ghost" onclick="closeWorkout()">Stoppen</button>
+      </div>`;
+    ws.togglePauseFiets = togglePauseFiets;
+    ws.completeFiets = completeFiets;
+  }
+
+  function tick() {
+    if (!paused) {
+      elapsed = Math.floor((Date.now() - startTime) / 1000);
+      if (elapsed >= totalSec) { clearInterval(timerInterval); tripleBeep(); }
+    }
+    render();
+  }
+
+  function togglePauseFiets() {
+    if (paused) { startTime = Date.now() - elapsed*1000; paused = false; timerInterval = setInterval(tick,1000); }
+    else { paused = true; clearInterval(timerInterval); }
+    render();
+  }
+
+  window.togglePauseFiets = togglePauseFiets;
+  window.completeFiets = function(dur) {
+    clearInterval(timerInterval);
+    appendLog({ name:'Fietsen', type:'fiets', dur, date: new Date().toISOString() });
+    closeWorkout();
+    renderToday();
+    renderSettings();
+    showCompleteBanner('Rit voltooid! 🚴 Goed gedaan.');
+  };
+
+  timerInterval = setInterval(tick, 1000);
+  render();
+  document.addEventListener('visibilitychange', () => {
+    if (!paused && document.visibilityState==='visible') { /* elapsed already based on Date.now */ }
+  });
+}
+
+// ─── LOPEN WORKOUT ────────────────────────────────────────────────────────────
+function startLoopWorkout(wkId, name) {
+  const lw = LOPEN_WORKOUTS[wkId];
+  if (!lw) return;
+  const ws = document.getElementById('workout-screen');
+  ws.classList.remove('hidden');
+
+  let segIdx = 0;
+  let segStartTime = Date.now();
+  let paused = false;
+  let pauseTime = 0;
+  let timerInterval;
+
+  function currentSeg() { return lw.segments[segIdx]; }
+  function totalSegs() { return lw.segments.length; }
+  function elapsed() { return paused ? pauseTime : Math.floor((Date.now() - segStartTime)/1000); }
+  function remaining() { return Math.max(currentSeg().duration - elapsed(), 0); }
+
+  function render() {
+    const seg = currentSeg();
+    const rem = remaining();
+    const pct = 1 - rem / seg.duration;
+    const color = seg.color==='orange' ? 'var(--orange)' : 'var(--green)';
+    const bg = seg.color==='orange' ? 'var(--orange-bg)' : 'var(--green-bg)';
+    const totalPct = (segIdx + pct) / totalSegs();
+
+    ws.innerHTML = `
+      <div class="wk-header">
+        <span class="wk-close" onclick="closeWorkout()">✕</span>
+        <span class="wk-title">${name}</span>
+        <span class="wk-rounds">${segIdx+1}/${totalSegs()}</span>
+      </div>
+      <div class="wk-progress"><div class="wk-progress-fill" style="width:${Math.round(totalPct*100)}%"></div></div>
+      <div class="wk-main" style="background:${bg};">
+        <div style="font-size:12px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">${seg.color==='orange'?'LOPEN':'WANDELEN/JOGGEN'}</div>
+        <div class="wk-exercise" style="color:${color};">${seg.name}</div>
+        <div class="wk-instruction">${seg.instruction}</div>
+        <div class="wk-timer-big" style="color:${color};">${formatTime(rem)}</div>
+      </div>
+      <div class="wk-actions">
+        ${rem > 0
+          ? `<button class="btn btn-ghost" onclick="togglePauseLoop()">${paused?'▶ Hervatten':'⏸ Pauzeren'}</button>`
+          : (segIdx < totalSegs()-1
+              ? `<button class="btn btn-primary" onclick="nextSegment()">Volgende segment →</button>`
+              : `<button class="btn btn-green" onclick="completeLoop()">✓ Workout voltooid</button>`)
+        }
+        <button class="btn btn-ghost" onclick="closeWorkout()">Stoppen</button>
+      </div>`;
+  }
+
+  function tick() {
+    if (!paused) {
+      const rem = remaining();
+      if (rem <= 0) {
+        clearInterval(timerInterval);
+        tripleBeep();
+      }
+    }
+    render();
+  }
+
+  window.nextSegment = function() {
+    segIdx++;
+    segStartTime = Date.now();
+    pauseTime = 0;
+    paused = false;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(tick, 500);
+    beep(660, 0.15);
+    render();
+  };
+  window.togglePauseLoop = function() {
+    if (paused) { segStartTime = Date.now() - pauseTime*1000; paused = false; timerInterval = setInterval(tick,500); }
+    else { pauseTime = elapsed(); paused = true; clearInterval(timerInterval); }
+    render();
+  };
+  window.completeLoop = function() {
+    const totalMin = Math.round(lw.segments.reduce((a,s)=>a+s.duration,0)/60);
+    clearInterval(timerInterval);
+    appendLog({ name, type:'lopen', dur:totalMin, date:new Date().toISOString() });
+    closeWorkout();
+    renderToday();
+    renderSettings();
+    showCompleteBanner('Loopsessie voltooid! 🏃 Uitstekend werk.');
+  };
+
+  timerInterval = setInterval(tick, 500);
+  render();
+}
+
+// ─── KRACHT WORKOUT ──────────────────────────────────────────────────────────
+function startWorkout(wkId, name) {
+  const wk = WORKOUTS[wkId];
+  if (!wk) return;
+  const ws = document.getElementById('workout-screen');
+  ws.classList.remove('hidden');
+
+  let round = 0;
+  let exIdx = 0;
+  let phase = 'exercise'; // 'exercise' | 'rest' | 'roundrest' | 'complete'
+  let timerStart = null;
+  let timerDur = 0;
+  let timerInterval;
+  const startTime = Date.now();
+
+  const totalSteps = wk.rounds * wk.exercises.length;
+  function currentStep() { return round * wk.exercises.length + exIdx; }
+  function pct() { return currentStep() / totalSteps; }
+
+  function render() {
+    const ex = wk.exercises[exIdx];
+    const exDef = EXERCISES[ex.id];
+    const remainingTime = () => {
+      if (!timerStart) return timerDur;
+      return Math.max(timerDur - Math.floor((Date.now() - timerStart)/1000), 0);
+    };
+
+    let mainHtml = '';
+
+    if (phase === 'complete') {
+      const dur = Math.round((Date.now()-startTime)/60000);
+      ws.innerHTML = `
+        <div class="wk-header"><span></span><span class="wk-title">${name}</span><span></span></div>
+        <div class="wk-complete">
+          <div class="wk-complete-icon">🏆</div>
+          <div class="wk-complete-title">Workout voltooid!</div>
+          <div class="wk-complete-sub">${wk.rounds} ronden · ${wk.exercises.length * wk.rounds} sets · ${dur} min</div>
+          <div class="wk-complete-stats">
+            <div class="wk-stat"><div class="wk-stat-val">${wk.rounds}</div><div class="wk-stat-label">Ronden</div></div>
+            <div class="wk-stat"><div class="wk-stat-val">${wk.exercises.length * wk.rounds}</div><div class="wk-stat-label">Sets</div></div>
+            <div class="wk-stat"><div class="wk-stat-val">${dur}</div><div class="wk-stat-label">Minuten</div></div>
+          </div>
+        </div>
+        <div class="wk-actions">
+          <button class="btn btn-green" onclick="completeWorkout('${wkId}','${name}',${Math.round((Date.now()-startTime)/60000)})">✓ Opslaan en afsluiten</button>
+        </div>`;
+      return;
+    }
+
+    if (phase === 'rest' || phase === 'roundrest') {
+      const rem = remainingTime();
+      const isRoundRest = phase === 'roundrest';
+      const nextEx = isRoundRest ? wk.exercises[0] : wk.exercises[exIdx];
+      const nextDef = EXERCISES[nextEx.id];
+      ws.innerHTML = `
+        <div class="wk-header">
+          <span class="wk-close" onclick="closeWorkout()">✕</span>
+          <span class="wk-title">${isRoundRest ? 'Pauze tussen ronden' : 'Rust'}</span>
+          <span class="wk-rounds">Ronde ${round+1}/${wk.rounds}</span>
+        </div>
+        <div class="wk-progress"><div class="wk-progress-fill" style="width:${Math.round(pct()*100)}%"></div></div>
+        <div class="wk-rest-screen">
+          <div class="wk-rest-label">${isRoundRest ? `Einde ronde ${round+1}` : 'Herstel'}</div>
+          <div class="wk-rest-timer">${formatTime(rem)}</div>
+          <div class="wk-rest-next">Volgende: ${nextDef.name}${isRoundRest ? ` — Ronde ${round+2}` : ''}</div>
+        </div>
+        <div class="wk-actions">
+          <button class="btn btn-primary" onclick="skipRest()">Overslaan →</button>
+          <button class="btn btn-ghost" onclick="closeWorkout()">Stoppen</button>
+        </div>`;
+      return;
+    }
+
+    // Exercise phase
+    const isTimedEx = !!ex.duration;
+    const rem = isTimedEx ? remainingTime() : null;
+    ws.innerHTML = `
+      <div class="wk-header">
+        <span class="wk-close" onclick="closeWorkout()">✕</span>
+        <span class="wk-title">Ronde ${round+1} van ${wk.rounds}</span>
+        <span class="wk-rounds">${exIdx+1}/${wk.exercises.length}</span>
+      </div>
+      <div class="wk-progress"><div class="wk-progress-fill" style="width:${Math.round(pct()*100)}%"></div></div>
+      <div class="wk-main">
+        <div class="wk-exercise">${exDef.name}</div>
+        <div class="wk-instruction">${ex.note || (isTimedEx ? 'Houd positie vast' : `${ex.reps} herhalingen`)}</div>
+        ${isTimedEx
+          ? `<div class="wk-timer-big ${rem<6?'pulse':''}">${formatTime(rem)}</div>`
+          : `<div class="wk-reps-big">${ex.reps}x</div><div class="wk-reps-label">${ex.note||'herhalingen'}</div>`
+        }
+        <div class="wk-tip"><div class="wk-tip-label">📌 Techniek</div><div class="wk-tip-text">${exDef.tip}</div></div>
+      </div>
+      <div class="wk-actions">
+        ${isTimedEx && rem > 0
+          ? `<button class="btn btn-ghost" onclick="skipExercise()">Overslaan →</button>`
+          : `<button class="btn btn-primary" onclick="nextExercise()">✓ Gedaan →</button>`
+        }
+        <button class="btn btn-ghost" onclick="closeWorkout()">Stoppen</button>
+      </div>`;
+  }
+
+  function startRestTimer(dur) {
+    timerDur = dur; timerStart = Date.now();
+    timerInterval = setInterval(() => {
+      if (Math.max(timerDur - Math.floor((Date.now()-timerStart)/1000), 0) <= 0) {
+        clearInterval(timerInterval); tripleBeep(); advanceFromRest();
+      }
+      render();
+    }, 500);
+  }
+
+  function startExTimer(dur) {
+    timerDur = dur; timerStart = Date.now();
+    timerInterval = setInterval(() => {
+      const rem = Math.max(timerDur - Math.floor((Date.now()-timerStart)/1000), 0);
+      if (rem === 3) beep(660);
+      if (rem <= 0) { clearInterval(timerInterval); tripleBeep(); render(); return; }
+      render();
+    }, 500);
+  }
+
+  function advanceFromRest() {
+    phase = 'exercise';
+    timerStart = null;
+    const ex = wk.exercises[exIdx];
+    if (ex.duration) startExTimer(ex.duration);
+    render();
+  }
+
+  window.nextExercise = function() {
+    clearInterval(timerInterval);
+    const ex = wk.exercises[exIdx];
+    const restDur = ex.rest || 0;
+
+    if (exIdx < wk.exercises.length - 1) {
+      exIdx++;
+      if (restDur > 0) { phase = 'rest'; startRestTimer(restDur); }
+      else { phase = 'exercise'; const nex = wk.exercises[exIdx]; if (nex.duration) startExTimer(nex.duration); }
+    } else {
+      // end of round
+      if (round < wk.rounds - 1) {
+        round++; exIdx = 0;
+        phase = 'roundrest'; startRestTimer(wk.restBetweenRounds);
+      } else {
+        phase = 'complete'; tripleBeep();
+      }
+    }
+    render();
+  };
+
+  window.skipRest = function() {
+    clearInterval(timerInterval);
+    advanceFromRest();
+  };
+
+  window.skipExercise = function() {
+    clearInterval(timerInterval);
+    nextExercise();
+  };
+
+  window.completeWorkout = function(id, nm, dur) {
+    appendLog({ name: nm, type:'kracht', dur, date: new Date().toISOString() });
+    closeWorkout();
+    renderToday();
+    renderSettings();
+    showCompleteBanner(`${nm} voltooid! 💪 ${dur} minuten.`);
+  };
+
+  // Start first exercise
+  const firstEx = wk.exercises[exIdx];
+  if (firstEx.duration) startExTimer(firstEx.duration);
+  render();
+}
+
+// ─── WORKOUT CLOSE ────────────────────────────────────────────────────────────
+function closeWorkout() {
+  const ws = document.getElementById('workout-screen');
+  ws.classList.add('hidden');
+  ws.innerHTML = '';
+}
+
+// ─── COMPLETE BANNER ─────────────────────────────────────────────────────────
+function showCompleteBanner(msg) {
+  const b = document.createElement('div');
+  b.style.cssText = 'position:fixed;bottom:100px;left:16px;right:16px;background:var(--green);color:white;padding:14px 20px;border-radius:14px;font-weight:600;font-size:15px;text-align:center;z-index:200;animation:fadeInUp 0.3s ease;';
+  b.textContent = msg;
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 3500);
+}
+
+// ─── CALENDAR EXPORT ─────────────────────────────────────────────────────────
+function exportCalendar() {
+  const state = getState();
+  if (!state.startDate) { alert('Stel eerst je startdatum in.'); return; }
+  const startMonday = new Date(state.startDate);
+  startMonday.setHours(0,0,0,0);
+
+  function pad(n) { return String(n).padStart(2,'0'); }
+  function icsDate(d, hour=21, min=0) {
+    return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(hour)}${pad(min)}00`;
+  }
+  function icsDateUTC(d) { return d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z'; }
+
+  let events = [];
+  WEEK_SCHEDULE.forEach(wk => {
+    const weekStart = new Date(startMonday);
+    weekStart.setDate(weekStart.getDate() + (wk.w-1)*7);
+
+    wk.sessions.forEach(sess => {
+      if (sess.type === 'rest') return;
+      if (wk.w <= 2 && sess.type === 'fiets') return;
+
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + sess.day - 1);
+      const isWeekend = sess.day === 6;
+      const hour = isWeekend ? 10 : 21;
+      const dur = sess.dur || 45;
+
+      const dtstart = icsDate(d, hour, 0);
+      const endD = new Date(d);
+      endD.setMinutes(endD.getMinutes() + dur);
+      const dtend = icsDate(endD, endD.getHours(), endD.getMinutes());
+      const uid = `1000km-w${wk.w}-d${sess.day}@coach`;
+      const desc = sess.type==='kracht' ? `Krachttraining circuit - ${sess.name}\\nNa 21u thuis` :
+                   sess.type==='lopen' ? `Loopsessie - ${sess.name}\\nNa 21u` :
+                   `Fietsrit - ${sess.name}\\nZaterdag ochtend`;
+
+      events.push(`BEGIN:VEVENT
+DTSTART;TZID=Europe/Brussels:${dtstart}
+DTEND;TZID=Europe/Brussels:${dtend}
+SUMMARY:🏋 ${sess.name} — Week ${wk.w}
+DESCRIPTION:${desc}
+UID:${uid}
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Herinnering: ${sess.name} over 30 minuten
+END:VALARM
+END:VEVENT`);
+    });
+  });
+
+  const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//1000km Coach//NL
+X-WR-CALNAME:1000km Training
+X-WR-TIMEZONE:Europe/Brussels
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+${events.join('\n')}
+END:VCALENDAR`;
+
+  const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '1000km-training.ics';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert('Bestand gedownload! Open het bestand om alle trainingen in je Apple Agenda te importeren. Elke sessie heeft een herinnering 30 min van tevoren.');
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function formatTime(sec) {
+  const m = Math.floor(sec/60);
+  const s = sec%60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+function init() {
+  renderToday();
+  // Set today greeting based on time
+  const h = new Date().getHours();
+  const state = getState();
+  if (state.startDate) {
+    const inp = document.getElementById('start-date-input');
+    if (inp) inp.value = state.startDate;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
